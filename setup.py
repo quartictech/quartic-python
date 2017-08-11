@@ -1,7 +1,7 @@
 import os
 from setuptools import setup, find_packages
 
-setup(name="platform-python",
+setup(name="quartic-python",
       version=os.environ.get("CIRCLE_BUILD_NUM", "unknown"),
       description="Quartic platform bindings",
       author="Quartic Technologies",
