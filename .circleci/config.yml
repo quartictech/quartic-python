@@ -2,7 +2,7 @@ version: 2
 
 jobs:
   build:
-    working_directory: ~/platform-python
+    working_directory: ~/quartic-python
     
     docker:
       - image: circleci/python:3.6.1
@@ -12,9 +12,9 @@ jobs:
 
       - restore_cache:
           keys:
-            - platform-python-{{ .Branch }}-{{ checksum "requirements.txt" }}-{{ checksum "setup.py" }}
-            - platform-python-{{ .Branch }}
-            - platform-python-develop
+            - quartic-python-{{ .Branch }}-{{ checksum "requirements.txt" }}-{{ checksum "setup.py" }}
+            - quartic-python-{{ .Branch }}
+            - quartic-python-develop
 
       - run: |
           python3 -m venv .env
@@ -22,7 +22,7 @@ jobs:
           pip install -r requirements.txt
 
       - save_cache:
-          key: platform-python-{{ .Branch }}-{{ checksum "requirements.txt" }}-{{ checksum "setup.py" }}
+          key: quartic-python-{{ .Branch }}-{{ checksum "requirements.txt" }}-{{ checksum "setup.py" }}
           paths:
             - .env
 
