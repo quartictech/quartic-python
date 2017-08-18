@@ -10,8 +10,8 @@ from networkx.drawing.nx_agraph import write_dot
 from quartic.utils import QuarticException
 from quartic import Quartic
 
-from ..pipeline.step import Step
-from ..pipeline.dataset import Dataset
+from ..step import Step
+from ..dataset import Dataset
 
 def build_dag(steps, default_namespace):
     datasets = set()

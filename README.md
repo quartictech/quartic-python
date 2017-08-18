@@ -1,6 +1,11 @@
 # Python bindings for Quartic platform
 This repository contains Python bindings for the [Quartic platform](https://www.quartic.io).
 
+## Components
+ - `quartic.pipeline` contains the executor for programs written in the Quartic Python DSL. This
+   is used within the Quartic platform to evaluate and execute pipeline DAGs.
+ - `quartic.pipeline.check` can be used during local development to test pipeline scripts are sane.
+
 ## Getting set up
 
 ```
