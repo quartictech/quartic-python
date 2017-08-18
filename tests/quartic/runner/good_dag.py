@@ -1,4 +1,12 @@
-from quartic.make import step, writer
+from quartic.make import step
+from quartic.make.dataset import Writer
+
+class DevNullWriter(Writer):
+    def apply(self, *args, **kwargs):
+        pass
+
+def writer(name, description):
+    return DevNullWriter(name, description)
 
 @step
 def step1(_: "my_input") -> "my_dataset":
