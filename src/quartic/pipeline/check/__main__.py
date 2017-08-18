@@ -94,8 +94,6 @@ def contract_inputs(dag, n):
             node["label"] = "{}\n + {} more".format(contract[ns][0], len(contract[ns]) - 1)
             node["style"] = "dotted"
 
-
-
 def save_graphviz(g, fname):
     dag = g.copy()
     counter = defaultdict(int)
