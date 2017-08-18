@@ -10,7 +10,8 @@ from networkx.drawing.nx_agraph import write_dot
 from quartic.utils import QuarticException
 from quartic import Quartic
 
-from .make import Step, Dataset
+from ..step import Step
+from ..dataset import Dataset
 
 def build_dag(steps, default_namespace):
     datasets = set()
@@ -92,8 +93,6 @@ def contract_inputs(dag, n):
             node = dag.node[contract[ns][0]]
             node["label"] = "{}\n + {} more".format(contract[ns][0], len(contract[ns]) - 1)
             node["style"] = "dotted"
-
-
 
 def save_graphviz(g, fname):
     dag = g.copy()
