@@ -1,8 +1,8 @@
 import pytest
 from mock import Mock, MagicMock
 from quartic import QuarticException
-from quartic.make.make import Dataset, Step, step, writer
-
+from quartic.make.step import step, Step
+from quartic.make.dataset import Dataset, writer
 
 class TestDataset:
     def test_init(self):
