@@ -1,6 +1,7 @@
 import sys
 import json
-from .runner import (main, parse_args, ArgumentParserException,
+from .runner import main, parse_args
+from .exceptions import (ArgumentParserException,
     MultipleMatchingStepsException, NoMatchingStepsException,
     UserCodeExecutionException, ModuleNotFoundException)
 
