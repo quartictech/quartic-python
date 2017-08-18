@@ -1,5 +1,5 @@
 from quartic import step
-from quartic.runner.dataset import Writer
+from quartic.pipeline.dataset import Writer
 
 class DevNullWriter(Writer):
     def apply(self, *args, **kwargs):
