@@ -45,6 +45,7 @@ def run_user_code(f, exception_file):
         _, _, tb = sys.exc_info()
         extracted_tb = traceback.extract_tb(tb)
         raise UserCodeExecutionException(
+            e,
             traceback.format_exc(),
             traceback.format_tb(tb),
             extracted_tb[-1].filename,

@@ -1,30 +1,30 @@
 class RunnerException(Exception):
-    def __init__(self, message, exit_code):
+    def __init__(self, message):
         super(RunnerException, self).__init__(message)
-        self.exit_code = exit_code
 
 class ArgumentParserException(RunnerException):
     def __init__(self, parser, message):
-        super(ArgumentParserException, self).__init__(message, 1)
+        super(ArgumentParserException, self).__init__(message)
         self.message = message
         self.parser = parser
 
 class MultipleMatchingStepsException(RunnerException):
     def __init__(self, step_id, steps):
-        super(MultipleMatchingStepsException, self).__init__("Multiple matching steps", 2)
+        super(MultipleMatchingStepsException, self).__init__("Multiple matching steps")
         self.step_id = step_id
         self.steps = steps
 
 class NoMatchingStepsException(RunnerException):
     def __init__(self, step_id):
-        super(NoMatchingStepsException, self).__init__("No matching steps", 3)
+        super(NoMatchingStepsException, self).__init__("No matching steps")
         self.step_id = step_id
 
 class UserCodeExecutionException(RunnerException):
-    def __init__(self, exception, tb, file_name,
+    def __init__(self, exception, formatted_exception, tb, file_name,
                  line_number, exception_type, exception_args):
-        super(UserCodeExecutionException, self).__init__("Exception while executing user code", 4)
-        self.exception = exception
+        super(UserCodeExecutionException, self).__init__("Exception while executing user code")
+        self._exception = exception
+        self.formatted_exception = formatted_exception
         self.traceback = tb
         self.file_name = file_name
         self.line_number = line_number
