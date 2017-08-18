@@ -3,9 +3,8 @@ import sys
 import importlib
 import json
 import traceback
-from quartic.make.step import Step
 from quartic import Quartic
-
+from .step import Step
 from .exceptions import *
 
 class ThrowingArgumentParser(argparse.ArgumentParser):
