@@ -6,6 +6,7 @@ def prep_parser():
     parser = argparse.ArgumentParser(description="Validate Quartic pipelines and DAG.")
     subparser = parser.add_subparsers(help="TBD")
     subparser.required = True
+    subparser.dest = 'command'
     subparser.add_parser('validate')
     subparser.add_parser('graph')
     subparser.add_parser('json')
@@ -18,7 +19,8 @@ def main():
     args = parser.parse_args()
 
     print(args)
-    if args.validate:
+    print("h")
+    if args.command == "validate":
         validate()
     elif args.graph:
         graphviz()
