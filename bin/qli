@@ -1,4 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import quartic.pipeline.validator
+from quartic.pipeline.validator import cli
+
+cli.main()

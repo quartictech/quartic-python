@@ -35,29 +35,6 @@ def check_dag(dag):
     if not nx.is_directed_acyclic_graph(dag):
         raise QuarticException("graph is not a dag")
 
-def parse_args():
-    parser = argparse.ArgumentParser(description="run quartic pipelines")
-    parser.add_argument("modules", metavar="MODULE", type=str, nargs="+",
-                        help="python module(s) containing build pipeline definitions")
-    subparsers = parser.add_subparsers(help="sub-command help", dest="operation")
-    subparsers.required = True
-
-    actions = [
-        ("run", "run a make"),
-        ("graphviz", "output a graphviz file"),
-        ("json", "output a json graph file"),
-        ("explain", "print what would be done")
-    ]
-    
-    for action, action_help in actions:
-        cmd = subparsers.add_parser(action, help=action_help)
-        cmd.set_defaults(action=action)
-        cmd.add_argument("--check-raw-datasets", dest="check_raw_datasets", action="store_true")
-        cmd.add_argument("--namespace", required=True)
-        cmd.add_argument("--resume-file", dest="resume_file")
-
-    return parser.parse_args()
-
 # https://stackoverflow.com/questions/2892931/longest-common-substring-from-more-than-two-strings-python
 def common_prefix(strings):
     """ Find the longest string that is a prefix of all the strings.
@@ -202,39 +179,3 @@ def run(action, modules, namespace, check_raw_datasets, resume_file=None):
             "materialize": materialise_datasets
         })
 
-    quartic = Quartic("http://{service}.platform:{port}/api/")
-    # Optionally check if raw datasets exist before starting
-    if check_raw_datasets:
-        errors = []
-        for ds in raw_datasets:
-            dataset = ds.resolve(quartic)
-            if not dataset.data_exists():
-                errors.append("dataset {} not found".format(dataset))
-        if errors:
-            raise QuarticException(errors)
-
-    # Run/explain steps
-    if action in ["run", "explain"]:
-        for step in run_steps:
-            step_text = "[{}] {} ".format(step.name, step.description if step.description else "")
-            inputs = [i for i in step.inputs()]
-            outputs = [o for o in step.outputs()]
-            print("{:-<80}".format(step_text))
-            print("inputs: {}".format(pprint.pformat(inputs)))
-            print("output: {}".format(pprint.pformat(outputs)))
-            if action == "run":
-                output_dataset = outputs[0].fully_qualified(namespace)
-                if not output_dataset in completed_datasets:
-                    step.execute(quartic, namespace)
-                    completed_datasets = completed_datasets.union(set(outputs))
-                    if resume_file:
-                        json.dump([str(d) for d in completed_datasets], open(resume_file, "w"), indent=1)
-                else:
-                    print("> Skipping due to resume file")
-
-def main():
-    args = parse_args()
-    run(args.action, args.modules, args.namespace, args.check_raw_datasets, args.resume_file)
-
-if __name__ == "__main__":
-    main()
