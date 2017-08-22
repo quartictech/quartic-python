@@ -28,7 +28,6 @@ def build_dag(steps, default_namespace):
             for o in step.outputs():
                 g.add_edge(i.fully_qualified(default_namespace),
                            o.fully_qualified(default_namespace), label=step.name, step=step)
-
     return g
 
 def check_dag(dag):
@@ -135,8 +134,16 @@ def load_resume_file(resume_file, default_namespace):
         print("Resume file not found. Assuming empty.")
         return set()
 
-def run(action, modules, namespace, check_raw_datasets, resume_file=None):
+def get_modules():
+    modules = []
+    for f in os.listdir("."):
+        if f.endswith(".py"):
+            modules.append(f.strip('.py'))
+    return modules
+
+def validate(action, namespace="local-testing"):
     steps = []
+    modules = get_modules()
     for module in modules:
         m = importlib.import_module(module)
 
@@ -147,7 +154,6 @@ def run(action, modules, namespace, check_raw_datasets, resume_file=None):
     # build the DAG and check it
     dag = build_dag(steps, namespace)
     check_dag(dag)
-    completed_datasets = load_resume_file(resume_file, namespace)
 
     # build list of raw datasets and ones to materialise (tsorted)
     raw_datasets = []
