@@ -5,6 +5,8 @@ from .dag_utils import validate, graphviz, json, describe
 def prep_parser():
     parser = argparse.ArgumentParser(description="Validate Quartic pipelines and DAG.")
     subparser = parser.add_subparsers(help="TBD")
+    #hack
+    # https://bugs.python.org/issue9253#msg186387
     subparser.required = True
     subparser.dest = 'command'
     subparser.add_parser('validate')
