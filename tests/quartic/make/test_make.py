@@ -1,7 +1,7 @@
 import pytest
 from mock import Mock, MagicMock
 from quartic import QuarticException
-from quartic.make.make import Dataset, Step, step, writer
+from quartic.make.make import Dataset, step, writer
 
 
 class TestDataset:
@@ -98,7 +98,7 @@ class TestWriter:
 
 
 
-class TestStep:
+class Teststep:
     def setup_method(self, method):
         # pylint: disable=attribute-defined-outside-init
         self.writer = Mock()
@@ -106,7 +106,7 @@ class TestStep:
             self.x = x
             self.y = y
             return self.writer
-        self.valid_step = Step(func)
+        self.valid_step = step(func)
 
 
     def test_decorator_applies_step_wrapper(self):
@@ -114,7 +114,7 @@ class TestStep:
         def func() -> "alice/bob":
             pass
 
-        assert isinstance(func, Step)
+        assert isinstance(func, step)
 
 
     def test_complains_if_unannotated_arguments(self):
@@ -122,7 +122,7 @@ class TestStep:
             pass
 
         with pytest.raises(QuarticException) as excinfo:
-            Step(func)
+            step(func)
 
         assert "Unannotated argument" in str(excinfo.value)
         assert "'x'" in str(excinfo.value)
@@ -133,7 +133,7 @@ class TestStep:
             pass
 
         with pytest.raises(QuarticException) as excinfo:
-            Step(func)
+            step(func)
 
         assert "No output" in str(excinfo.value)
 

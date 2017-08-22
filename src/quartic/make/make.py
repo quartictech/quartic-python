@@ -3,9 +3,6 @@ import itertools
 import inspect
 from quartic.utils import raise_if_invalid_coord, QuarticException
 
-def step(f):
-    return Step(f)
-
 class Dataset:
     def __init__(self, dataset_id, namespace=None):
         if isinstance(dataset_id, Dataset):
@@ -71,8 +68,8 @@ def writer(name, description=None):
     return Writer(name, description)
 
 
-class Step:
-    def __init__(self, func, *args, **kwargs):
+class step:
+    def __init__(self, func):
         self.name = func.__name__
         self.description = func.__doc__
         self._func = func
@@ -132,5 +129,3 @@ class Step:
             "inputs": list(self.inputs()),
             "outputs": list(self.outputs())
         })
-
-
