@@ -1,19 +1,17 @@
-import sys
-import importlib
+import importlib.util
 import pprint
 import json
 from collections import defaultdict
-import networkx as nx
-import argparse
 import os.path
+import networkx as nx
 from networkx.drawing.nx_agraph import write_dot
 from quartic.utils import QuarticException
-from quartic import Quartic
 
 from ..step import Step
 from ..dataset import Dataset
 
 def build_dag(steps, default_namespace):
+    assert steps
     datasets = set()
     for step in steps:
         for ds in step.datasets():
@@ -59,10 +57,9 @@ def contract_inputs(dag, n):
         successors = dag.successors(pred)
         if len(successors) == 1 and n[0] in successors:
             contract[pred.namespace].append(pred)
-    
+
     for ns in contract.keys():
         if len(contract[ns]) > 5:
-            print(contract[ns])
             prefix = common_prefix([c.dataset_id for c in contract[ns]])
             for n in contract[ns][1:]:
                 dag.remove_node(n)
@@ -123,10 +120,10 @@ def save_json(dag, fname):
 
 def load_resume_file(resume_file, default_namespace):
     if resume_file and os.path.exists(resume_file):
-        datasets = [Dataset.parse(s).fully_qualified(default_namespace) 
+        datasets = [Dataset.parse(s).fully_qualified(default_namespace)
                     for s in json.load(open(resume_file))]
 
-    
+
         datasets = set(datasets)
         print("skipping datasets: {}".format(pprint.pformat(datasets)))
         return datasets
@@ -134,25 +131,41 @@ def load_resume_file(resume_file, default_namespace):
         print("Resume file not found. Assuming empty.")
         return set()
 
-def get_modules():
-    modules = []
+def get_module_specs():
+    module_specs = []
     for f in os.listdir("."):
         if f.endswith(".py"):
-            modules.append(f.strip('.py'))
-    return modules
+            module_specs.append(
+                importlib.util.spec_from_file_location(f.strip('.py'), os.path.abspath(f))
+                )
+    assert module_specs
+    return module_specs
 
-def validate(action, namespace="local-testing"):
+def validate():
     steps = []
-    modules = get_modules()
-    for module in modules:
-        m = importlib.import_module(module)
-
+    modules = get_module_specs()
+    for mspec in modules:
+        m = importlib.util.module_from_spec(mspec)
+        mspec.loader.exec_module(m)
         for k, v in m.__dict__.items():
             if isinstance(v, Step):
                 steps.append(v)
 
     # build the DAG and check it
-    dag = build_dag(steps, namespace)
+    dag = build_dag(steps, "local-testing")
+    return check_dag(dag)
+
+def guff_validate(action='graphviz'):
+    steps = []
+    modules = get_module_specs()
+    for module in modules:
+        m = importlib.import_module(module)
+        for k, v in m.__dict__.items():
+            if isinstance(v, Step):
+                steps.append(v)
+
+    # build the DAG and check it
+    dag = build_dag(steps, "local-testing")
     check_dag(dag)
 
     # build list of raw datasets and ones to materialise (tsorted)
@@ -184,4 +197,3 @@ def validate(action, namespace="local-testing"):
             "raw": raw_datasets,
             "materialize": materialise_datasets
         })
-

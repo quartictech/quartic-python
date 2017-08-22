@@ -1,27 +1,21 @@
 
 import argparse
-from .utils import validate
+from .utils import validate, guff_validate
 
-def parse_args():
+def prep_parser():
     parser = argparse.ArgumentParser(description="Validate Quartic pipelines and DAG.")
-    subparsers = parser.add_subparsers(help="sub-command help", dest="operation")
-    subparsers.required = False
+    parser.add_argument('validate')
 
-    actions = [
-        ("graphviz", "Output a graphviz file."),
-        ("json", "Output a json graph file."),
-        ("explain", "Print what would be done.")
-    ]
-    
-    for action, action_help in actions:
-        cmd = subparsers.add_parser(action, help=action_help)
-        cmd.set_defaults(action=action)
-
-    return parser.parse_args()
+    return parser
 
 def main():
-    args = parse_args()
-    validate(args.action)
+    parser = prep_parser()
+    args = parser.parse_args()
+    if args.validate:
+        validate()
+        # guff_validate()
+
+
 
 if __name__ == "__main__":
     main()
