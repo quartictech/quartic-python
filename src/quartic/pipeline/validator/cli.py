@@ -18,8 +18,6 @@ def main():
     parser = prep_parser()
     args = parser.parse_args()
 
-    print(args)
-    print("h")
     if args.command == "validate":
         validate()
     elif args.graph:
