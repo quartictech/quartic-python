@@ -18,4 +18,6 @@ setup(name="quartic-python",
           "pandas==0.20.1",
           "networkx==1.11"
       ],
-      zip_safe=False)
+      zip_safe=False,
+      scripts=['bin/qli']
+      )
