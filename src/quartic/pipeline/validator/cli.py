@@ -1,22 +1,31 @@
 
 import argparse
-from .utils import validate, graphviz
+from .dag_utils import validate, graphviz, json, describe
 
 def prep_parser():
     parser = argparse.ArgumentParser(description="Validate Quartic pipelines and DAG.")
-    parser.add_argument('validate')
+    subparser = parser.add_subparsers(help="TBD")
+    subparser.required = True
+    subparser.add_parser('validate')
+    subparser.add_parser('graph')
+    subparser.add_parser('json')
+    subparser.add_parser('describe')
 
     return parser
 
 def main():
     parser = prep_parser()
     args = parser.parse_args()
+
+    print(args)
     if args.validate:
         validate()
+    elif args.graph:
         graphviz()
-        # guff_validate()
-
-
+    elif args.describe:
+        describe()
+    elif args.json:
+        json()
 
 if __name__ == "__main__":
     main()

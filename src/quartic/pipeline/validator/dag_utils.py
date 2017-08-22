@@ -27,6 +27,7 @@ def build_dag(steps, default_namespace):
 def check_dag(dag):
     if not nx.is_directed_acyclic_graph(dag):
         raise QuarticException("graph is not a dag")
+    else: return True
 
 def get_module_specs():
     module_specs = []
