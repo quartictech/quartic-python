@@ -1,6 +1,6 @@
 
 import argparse
-from .utils import validate, guff_validate
+from .utils import validate, graphviz
 
 def prep_parser():
     parser = argparse.ArgumentParser(description="Validate Quartic pipelines and DAG.")
@@ -13,6 +13,7 @@ def main():
     args = parser.parse_args()
     if args.validate:
         validate()
+        graphviz()
         # guff_validate()
 
 
