@@ -4,7 +4,7 @@ import os.path
 import networkx as nx
 from quartic.utils import QuarticException
 from ..step import Step
-from ..dataset import Dataset
+from .utils import save_graphviz, save_json
 
 def build_dag(steps, default_namespace):
     assert steps
@@ -27,8 +27,6 @@ def build_dag(steps, default_namespace):
 def check_dag(dag):
     if not nx.is_directed_acyclic_graph(dag):
         raise QuarticException("graph is not a dag")
-
-
 
 def get_module_specs():
     module_specs = []
@@ -84,21 +82,10 @@ def graphviz():
 
     save_graphviz(dag, "graph.dot")
 
-
-def guff_validate(action='graphviz'):
-    steps = []
-    modules = get_module_specs()
-    for module in modules:
-        m = importlib.import_module(module)
-        for k, v in m.__dict__.items():
-            if isinstance(v, Step):
-                steps.append(v)
-
-    # build the DAG and check it
+def json():
+    steps = get_pipeline_steps()
+    validate(steps)
     dag = build_dag(steps, "local-testing")
-    check_dag(dag)
-
-    # build list of raw datasets and ones to materialise (tsorted)
     raw_datasets = []
     materialise_datasets = []
     for node in nx.topological_sort(dag):
@@ -118,10 +105,32 @@ def guff_validate(action='graphviz'):
         assert len(steps) == 1
         run_steps.append(steps.pop())
 
-    if action == "json":
-        save_json(dag, "graph.json")
-    elif action == "explain":
-        pprint.pprint({
-            "raw": raw_datasets,
-            "materialize": materialise_datasets
-        })
+    save_json(dag, "graph.dot")
+
+def describe():
+    steps = get_pipeline_steps()
+    validate(steps)
+    dag = build_dag(steps, "local-testing")
+    raw_datasets = []
+    materialise_datasets = []
+    for node in nx.topological_sort(dag):
+        if dag.in_degree(node) == 0:
+            raw_datasets.append(node)
+        else:
+            materialise_datasets.append(node)
+
+    # build list of steps to run in topological order
+    run_steps = []
+    for ds in materialise_datasets:
+        edges = dag.in_edges(ds, True)
+        steps = set()
+        for edge in edges:
+            steps.add(edge[2]["step"])
+
+        assert len(steps) == 1
+        run_steps.append(steps.pop())
+
+    pprint.pprint({
+        "raw": raw_datasets,
+        "materialize": materialise_datasets
+    })
