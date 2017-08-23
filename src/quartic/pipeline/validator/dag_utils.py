@@ -30,17 +30,6 @@ def check_dag(dag):
         raise QuarticException("graph is not a dag")
     else: return True
 
-def get_pipeline_steps():
-    steps = []
-    modules = utils.get_module_specs()
-    for mspec in modules:
-        m = importlib.util.module_from_spec(mspec)
-        mspec.loader.exec_module(m)
-        for k, v in m.__dict__.items():
-            if isinstance(v, Step):
-                steps.append(v)
-    assert steps
-    return steps
 
 def validate(steps=None):
     if not steps:

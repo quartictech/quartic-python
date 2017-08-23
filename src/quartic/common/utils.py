@@ -1,5 +1,6 @@
 import os
 import importlib
+from quartic.common.step import Step
 
 def find_python_files(d):
     files = []
@@ -33,3 +34,16 @@ def get_module_specs(files):
             )
     assert module_specs
     return module_specs
+
+def get_pipeline_steps(files):
+    print(files)
+    steps = []
+    modules = get_module_specs(files)
+    for mspec in modules:
+        m = importlib.util.module_from_spec(mspec)
+        mspec.loader.exec_module(m)
+        for _, v in m.__dict__.items():
+            if isinstance(v, Step):
+                steps.append(v)
+    assert steps
+    return steps

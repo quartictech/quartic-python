@@ -10,7 +10,7 @@ from quartic.pipeline.runner.cli import main, parse_args, UserCodeExecutionExcep
 class TestCli:
     def test_evaluate_dag(self, tmpdir):
         output_path = os.path.join(tmpdir, "steps.json")
-        args = parse_args(["--evaluate", output_path, "tests.quartic.pipeline.good_dag"])
+        args = parse_args(["--evaluate", output_path, "tests/quartic/pipeline/good_dag.py"])
         main(args)
         steps = json.load(open(output_path))
         assert len(steps) == 2
@@ -28,17 +28,17 @@ class TestCli:
 
     def test_evaluate_bad_dag(self, tmpdir):
         output_path = os.path.join(tmpdir, "steps.json")
-        args = parse_args(["--evaluate", output_path, "tests.quartic.pipeline.bad_dag"])
+        args = parse_args(["--evaluate", output_path, "tests/quartic/pipeline/bad_dag.py"])
         with pytest.raises(UserCodeExecutionException) as e:
             main(args)
 
     def test_execute_step(self, tmpdir):
         output_path = os.path.join(tmpdir, "steps.json")
-        args = parse_args(["--evaluate", output_path, "tests.quartic.pipeline.good_dag"])
+        args = parse_args(["--evaluate", output_path, "tests/quartic/pipeline/good_dag.py"])
         main(args)
 
         steps = json.load(open(output_path))
-        args = parse_args(["--execute", steps[0]["id"], "--namespace", "test", "tests.quartic.pipeline.good_dag"])
+        args = parse_args(["--execute", steps[0]["id"], "--namespace", "test", "tests/quartic/pipeline/good_dag.py"])
         main(args)
 
 class TestDataset:
