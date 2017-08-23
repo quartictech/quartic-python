@@ -16,7 +16,7 @@ def get_files(*args):
     files = []
     if args:
         for a in args:
-            if a.endswith("/"):
+            if os.path.isdir(a):
                 files.append(find_python_files(a))
             if a.endswith(".py"):
                 files.append(a)
