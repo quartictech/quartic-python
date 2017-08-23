@@ -1,6 +1,7 @@
 
 import argparse
 from .dag_utils import validate, graphviz, json, describe
+from quartic.common.yaml_ops import find_config, write_default
 
 def prep_parser():
     parser = argparse.ArgumentParser(description="Validate Quartic pipelines and DAG.")
@@ -21,14 +22,28 @@ def main():
     parser = prep_parser()
     args = parser.parse_args()
 
+    if args.command != "init":
+        config = find_config()
+        if config is None:
+            print("No quartic.yml file found. Generate one using qli init.")
+            import sys
+            sys.exit(1)
+
     if args.command == "validate":
         validate()
-    elif args.graph:
+    elif args.command == "graph":
         graphviz()
-    elif args.describe:
+    elif args.command == "describe":
         describe()
-    elif args.json:
+    elif args.command == "json":
         json()
+    elif args.command == "init":
+        if find_config():
+            print("quartic.yml exists. Bailing.")
+            import sys
+            sys.exit(1)
+        else:
+            write_default()
 
 if __name__ == "__main__":
     main()

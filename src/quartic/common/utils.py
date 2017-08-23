@@ -42,6 +42,3 @@ def get_pipeline_steps(files):
                 steps.append(v)
     assert steps
     return steps
-
-def find_config():
-    pass
