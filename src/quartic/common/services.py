@@ -1,7 +1,7 @@
 import urllib.parse
 import requests
 from datadiff import diff
-from .utils import QuarticException
+from .exceptions import QuarticException
 
 
 class Service:
@@ -128,4 +128,3 @@ class Catalogue(Service):
             return "datasets/{}".format(namespace)
         else:
             return "datasets/{}/{}".format(namespace, Service._quote(dataset_id))
-

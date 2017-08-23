@@ -1,4 +1,5 @@
-from quartic.utils import raise_if_invalid_coord, QuarticException
+from .io import raise_if_invalid_coord
+from .exceptions import QuarticException
 
 class Dataset:
     def __init__(self, dataset_id, namespace=None):
@@ -39,7 +40,7 @@ class Dataset:
 
     def to_json(self):
         return {
-            "namespace": self.namespace, 
+            "namespace": self.namespace,
             "dataset_id": self.dataset_id
         }
 
@@ -70,4 +71,3 @@ class Writer:
 
 def writer(name, description=None):
     return Writer(name, description)
-

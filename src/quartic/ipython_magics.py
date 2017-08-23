@@ -1,6 +1,4 @@
-import warnings
-
-from .quartic import Quartic
+from .common.quartic import Quartic
 
 try:
     from IPython.core.magic import Magics, magics_class, line_magic

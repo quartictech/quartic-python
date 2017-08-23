@@ -1,7 +1,7 @@
 import sys
 import json
 from .cli import main, parse_args
-from .exceptions import (ArgumentParserException,
+from ..common.exceptions import (ArgumentParserException,
     MultipleMatchingStepsException, NoMatchingStepsException,
     UserCodeExecutionException, ModuleNotFoundException)
 
@@ -20,8 +20,7 @@ if __name__ == "__main__":
     except UserCodeExecutionException as e:
         write_exception(args.exception, type(e).__name__, e)
         raise e._exception
-    except (MultipleMatchingStepsException, NoMatchingStepsException, 
+    except (MultipleMatchingStepsException, NoMatchingStepsException,
             ModuleNotFoundException) as e:
         write_exception(args.exception, type(e).__name__, e)
         sys.exit(2)
-

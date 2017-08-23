@@ -35,3 +35,6 @@ class ModuleNotFoundException(RunnerException):
     def __init__(self, module):
         super(ModuleNotFoundException, self).__init__("Module not found", 5)
         self.module = module
+
+class QuarticException(Exception):
+    pass

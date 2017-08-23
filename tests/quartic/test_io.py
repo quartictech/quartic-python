@@ -1,5 +1,4 @@
-from quartic.io import DatasetWriter
-from quartic.utils import LocalIoFactory
+from quartic.common.io import DatasetWriter, LocalIoFactory
 import pandas as pd
 import pytest
 from mock import Mock, call

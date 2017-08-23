@@ -2,9 +2,9 @@
 This repository contains Python bindings for the [Quartic platform](https://www.quartic.io).
 
 ## Components
- - `quartic.pipeline` contains the executor for programs written in the Quartic Python DSL. This
+ - `quartic.pipeline.runner` contains the executor for programs written in the Quartic Python DSL. This
    is used within the Quartic platform to evaluate and execute pipeline DAGs.
- - `quartic.pipeline.check` can be used during local development to test pipeline scripts are sane.
+ - `quartic.pipeline.validator` can be used during local development to test pipeline scripts are sane.
 
 ## Getting set up
 
@@ -37,5 +37,3 @@ We're trending toward the layout described here:
 
 ## License
 This project is made available under the [BSD 3-Clause License](https://github.com/quartictech/quartic-python/blob/develop/LICENSE).
-
-

@@ -3,14 +3,14 @@ import os.path
 import pytest
 from mock import Mock, MagicMock
 from quartic import QuarticException
-from quartic.pipeline.step import step, Step
-from quartic.pipeline.dataset import Dataset, writer
-from quartic.pipeline.cli import main, parse_args, UserCodeExecutionException
+from quartic.common.step import step, Step
+from quartic.common.dataset import Dataset, writer
+from quartic.pipeline.runner.cli import main, parse_args, UserCodeExecutionException
 
 class TestCli:
     def test_evaluate_dag(self, tmpdir):
         output_path = os.path.join(tmpdir, "steps.json")
-        args = parse_args(["--evaluate", output_path, "tests.quartic.pipeline.good_dag"])
+        args = parse_args(["--evaluate", output_path, "tests/quartic/pipeline/good_dag.py"])
         main(args)
         steps = json.load(open(output_path))
         assert len(steps) == 2
@@ -28,17 +28,17 @@ class TestCli:
 
     def test_evaluate_bad_dag(self, tmpdir):
         output_path = os.path.join(tmpdir, "steps.json")
-        args = parse_args(["--evaluate", output_path, "tests.quartic.pipeline.bad_dag"])
+        args = parse_args(["--evaluate", output_path, "tests/quartic/pipeline/bad_dag.py"])
         with pytest.raises(UserCodeExecutionException) as e:
             main(args)
 
     def test_execute_step(self, tmpdir):
         output_path = os.path.join(tmpdir, "steps.json")
-        args = parse_args(["--evaluate", output_path, "tests.quartic.pipeline.good_dag"])
+        args = parse_args(["--evaluate", output_path, "tests/quartic/pipeline/good_dag.py"])
         main(args)
 
         steps = json.load(open(output_path))
-        args = parse_args(["--execute", steps[0]["id"], "--namespace", "test", "tests.quartic.pipeline.good_dag"])
+        args = parse_args(["--execute", steps[0]["id"], "--namespace", "test", "tests/quartic/pipeline/good_dag.py"])
         main(args)
 
 class TestDataset:
@@ -143,7 +143,7 @@ class TestStep:
             self.x = x
             self.y = y
             return self.writer
-        self.valid_step = Step(func)
+        self.valid_step = step(func)
 
 
     def test_decorator_applies_step_wrapper(self):
@@ -159,7 +159,7 @@ class TestStep:
             pass
 
         with pytest.raises(QuarticException) as excinfo:
-            Step(func)
+            step(func)
 
         assert "Unannotated argument" in str(excinfo.value)
         assert "'x'" in str(excinfo.value)
@@ -170,7 +170,7 @@ class TestStep:
             pass
 
         with pytest.raises(QuarticException) as excinfo:
-            Step(func)
+            step(func)
 
         assert "No output" in str(excinfo.value)
 
@@ -200,4 +200,3 @@ class TestStep:
         assert self.x == "foo"
         assert self.y == {"a": "bar", "b": "bear"}
         self.writer.apply.assert_called_with("baz")
-

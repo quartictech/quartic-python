@@ -1,5 +1,5 @@
 from quartic import step
-from quartic.pipeline.dataset import Writer
+from quartic.common.dataset import Writer
 
 class DevNullWriter(Writer):
     def apply(self, *args, **kwargs):
@@ -17,4 +17,3 @@ def step1(_: "my_input") -> "my_dataset":
 def step2(_: "my_dataset") -> "my_dataset2":
     "Second step"
     return writer("Stuff", "Further stuff").json({})
-

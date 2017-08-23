@@ -1,8 +1,10 @@
 import re
+import tempfile
 import warnings
 import urllib.parse
 import urllib.request
 import json
+import requests
 
 # Adapted from:
 # http://stackoverflow.com/questions/28682562/pandas-read-csv-converting-mixed-types-columns-as-string
@@ -35,6 +37,11 @@ def _raise_if_any_mixed_type_columns(df):
     bad_columns = [c for c in df.columns if len(set([type(x) for x in df[c].unique() if x is not None])) > 1]
     if bad_columns:
         raise ValueError("Cannot write columns with mixed types: {}".format(bad_columns))
+        
+def raise_if_invalid_coord(*coords):
+    for coord in coords:
+        if coord and ":" in coord:
+            raise ValueError("Dataset coordinate cannot contain ':' character")
 
 def _write_parquet(df, f):
     import pyarrow.parquet as pq
@@ -109,3 +116,77 @@ class DatasetWriter(object):
         self._file.cancel()
         self._file = self._io_factory.writable_file(mode="w+")
         df.to_csv(self._file, *args, **kwargs)
+
+
+class DownloadFile:
+    def __init__(self, url):
+        self._tmp = tempfile.SpooledTemporaryFile(max_size=10 * 1024 * 1024)
+        r = requests.get(url, stream=True)
+        for chunk in r.iter_content(chunk_size=1024):
+            if chunk: # filter out keep-alive new chunks
+                self._tmp.write(chunk)
+        self._tmp.seek(0)
+    def read(self, *args, **kwargs):
+        return self._tmp.read(*args, **kwargs)
+    def seek(self, *args, **kwargs):
+        return self._tmp.seek(*args, **kwargs)
+    def tell(self, *args, **kwargs):
+        return self._tmp.tell(*args, **kwargs)
+    def close(self):
+        self._tmp.close()
+    def __enter__(self):
+        return self
+    def __exit__(self, *args, **kwargs):
+        self.close()
+
+class UploadFile:
+    def __init__(self, url, method, mode='w+b'):
+        self._url = url
+        self._tmp = tempfile.SpooledTemporaryFile(max_size=10 * 1024 * 1024, mode=mode)
+        self._method = method
+        self.response = None
+
+    def write(self, *args, **kwargs):
+        return self._tmp.write(*args, **kwargs)
+    def seek(self, *args, **kwargs):
+        return self._tmp.seek(*args, **kwargs)
+    def tell(self, *args, **kwargs):
+        return self._tmp.tell(*args, **kwargs)
+    def close(self):
+        self._tmp.flush()
+        self._tmp.seek(0)
+        if self._method == "PUT":
+            self.response = requests.put(self._url, data=self._tmp)
+        elif self._method == "POST":
+            self.response = requests.post(self._url, data=self._tmp)
+        self.response.raise_for_status()
+        self._tmp.close()
+    def cancel(self):
+        self._tmp.close()
+
+    def __enter__(self):
+        return self
+    def __exit__(self, *args, **kwargs):
+        self.close()
+
+class LocalIoFactory:
+    def __init__(self, path):
+        self._path = path
+    def writable_file(self, mode="w+b"):
+        file = open(self._path, mode)
+        file.cancel = lambda: None
+        return file
+
+    def readable_file(self, mode="r+b"):
+        return open(self._path, mode)
+
+class RemoteIoFactory:
+    def __init__(self, url, method):
+        self._url = url
+        self._method = method
+
+    def writable_file(self, mode="w+b"):
+        return UploadFile(self._url, self._method, mode)
+
+    def readable_file(self, mode="r+b"):
+        return DownloadFile(self._url)
