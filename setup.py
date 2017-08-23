@@ -17,8 +17,9 @@ setup(name="quartic-python",
           "pyproj==1.9.5.1",
           "pandas==0.20.1",
           "networkx==1.11",
-          "pygraphviz==1.3.1"
       ],
+      extras_require={
+          "graphviz":["pygraphviz==1.3.1"]
+      },
       zip_safe=False,
-      scripts=['bin/qli']
-      )
+      scripts=["bin/qli"])
