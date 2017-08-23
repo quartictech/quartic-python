@@ -106,7 +106,7 @@ def json():
         assert len(steps) == 1
         run_steps.append(steps.pop())
 
-    save_json(dag, "graph.dot")
+    save_json(dag, "graph.json")
 
 def describe():
     steps = get_pipeline_steps()
