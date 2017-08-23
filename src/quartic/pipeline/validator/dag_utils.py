@@ -5,6 +5,7 @@ import networkx as nx
 from quartic.utils import QuarticException
 from ..step import Step
 from .utils import save_graphviz, save_json
+from ..common import utils
 
 def build_dag(steps, default_namespace):
     assert steps
@@ -29,19 +30,9 @@ def check_dag(dag):
         raise QuarticException("graph is not a dag")
     else: return True
 
-def get_module_specs():
-    module_specs = []
-    for f in os.listdir("."):
-        if f.endswith(".py"):
-            module_specs.append(
-                importlib.util.spec_from_file_location(f.strip('.py'), os.path.abspath(f))
-                )
-    assert module_specs
-    return module_specs
-
 def get_pipeline_steps():
     steps = []
-    modules = get_module_specs()
+    modules = utils.get_module_specs()
     for mspec in modules:
         m = importlib.util.module_from_spec(mspec)
         mspec.loader.exec_module(m)
