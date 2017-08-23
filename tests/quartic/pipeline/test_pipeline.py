@@ -135,7 +135,7 @@ class TestWriter:
 
 
 
-class Teststep:
+class TestStep:
     def setup_method(self, method):
         # pylint: disable=attribute-defined-outside-init
         self.writer = Mock()
