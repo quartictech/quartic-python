@@ -3,7 +3,7 @@ import itertools
 import zlib
 import os.path
 import pprint
-from quartic.utils import QuarticException
+from .exceptions import QuarticException
 from .dataset import Dataset
 
 def step(f):
@@ -82,4 +82,3 @@ class Step:
             "inputs": list([i.to_json() for i in self.inputs()]),
             "outputs": list([o.to_json() for o in self.outputs()])
         }
-

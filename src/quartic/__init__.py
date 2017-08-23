@@ -1,7 +1,7 @@
 from .ipython_magics import *
 
-from .quartic import Quartic
-from .utils import QuarticException
+from .common.quartic import Quartic
+from .common.exceptions import QuarticException
 
-from .pipeline.step import step
-from .pipeline.dataset import writer
+from .common.step import step
+from .common.dataset import writer

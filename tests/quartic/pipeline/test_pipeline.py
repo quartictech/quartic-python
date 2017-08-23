@@ -3,9 +3,9 @@ import os.path
 import pytest
 from mock import Mock, MagicMock
 from quartic import QuarticException
-from quartic.pipeline.step import step, Step
-from quartic.pipeline.dataset import Dataset, writer
-from quartic.pipeline.cli import main, parse_args, UserCodeExecutionException
+from quartic.common.step import step, Step
+from quartic.common.dataset import Dataset, writer
+from quartic.pipeline.runner.cli import main, parse_args, UserCodeExecutionException
 
 class TestCli:
     def test_evaluate_dag(self, tmpdir):
@@ -200,4 +200,3 @@ class TestStep:
         assert self.x == "foo"
         assert self.y == {"a": "bar", "b": "bear"}
         self.writer.apply.assert_called_with("baz")
-

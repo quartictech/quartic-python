@@ -1,8 +1,8 @@
 import requests
 
-from quartic.io import DatasetWriter, DatasetReader
-from quartic.services import Howl, Catalogue
-from .utils import RemoteIoFactory, QuarticException, raise_if_invalid_coord
+from .io import DatasetWriter, DatasetReader, RemoteIoFactory, raise_if_invalid_coord
+from .services import Howl, Catalogue
+from .exceptions import QuarticException
 
 class Quartic:
     def __init__(self, url_format="http://localhost:{port}/api/", shell=None):
