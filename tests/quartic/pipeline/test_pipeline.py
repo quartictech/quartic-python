@@ -3,6 +3,7 @@ import os.path
 import pytest
 from mock import Mock, MagicMock
 from quartic import QuarticException
+<<<<<<< HEAD:tests/quartic/pipeline/test_pipeline.py
 from quartic.common.step import step, Step
 from quartic.common.dataset import Dataset, writer
 from quartic.pipeline.runner.cli import main, parse_args, UserCodeExecutionException
@@ -40,6 +41,10 @@ class TestCli:
         steps = json.load(open(output_path))
         args = parse_args(["--execute", steps[0]["id"], "--namespace", "test", "tests/quartic/pipeline/good_dag.py"])
         main(args)
+=======
+from quartic.make.make import Dataset, step, writer
+
+>>>>>>> feature/simplify:tests/quartic/make/test_make.py
 
 class TestDataset:
     def test_init(self):
@@ -135,7 +140,7 @@ class TestWriter:
 
 
 
-class TestStep:
+class Teststep:
     def setup_method(self, method):
         # pylint: disable=attribute-defined-outside-init
         self.writer = Mock()
@@ -143,7 +148,7 @@ class TestStep:
             self.x = x
             self.y = y
             return self.writer
-        self.valid_step = Step(func)
+        self.valid_step = step(func)
 
 
     def test_decorator_applies_step_wrapper(self):
@@ -151,7 +156,7 @@ class TestStep:
         def func() -> "alice/bob":
             pass
 
-        assert isinstance(func, Step)
+        assert isinstance(func, step)
 
 
     def test_complains_if_unannotated_arguments(self):
@@ -159,7 +164,7 @@ class TestStep:
             pass
 
         with pytest.raises(QuarticException) as excinfo:
-            Step(func)
+            step(func)
 
         assert "Unannotated argument" in str(excinfo.value)
         assert "'x'" in str(excinfo.value)
@@ -170,7 +175,7 @@ class TestStep:
             pass
 
         with pytest.raises(QuarticException) as excinfo:
-            Step(func)
+            step(func)
 
         assert "No output" in str(excinfo.value)
 
