@@ -3,7 +3,6 @@ import os.path
 import pytest
 from mock import Mock, MagicMock
 from quartic import QuarticException
-<<<<<<< HEAD:tests/quartic/pipeline/test_pipeline.py
 from quartic.common.step import step, Step
 from quartic.common.dataset import Dataset, writer
 from quartic.pipeline.runner.cli import main, parse_args, UserCodeExecutionException
@@ -41,10 +40,6 @@ class TestCli:
         steps = json.load(open(output_path))
         args = parse_args(["--execute", steps[0]["id"], "--namespace", "test", "tests/quartic/pipeline/good_dag.py"])
         main(args)
-=======
-from quartic.make.make import Dataset, step, writer
-
->>>>>>> feature/simplify:tests/quartic/make/test_make.py
 
 class TestDataset:
     def test_init(self):
@@ -156,7 +151,7 @@ class Teststep:
         def func() -> "alice/bob":
             pass
 
-        assert isinstance(func, step)
+        assert isinstance(func, Step)
 
 
     def test_complains_if_unannotated_arguments(self):
