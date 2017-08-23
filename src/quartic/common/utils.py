@@ -11,7 +11,6 @@ def find_python_files(d):
             continue
     return files
 
-
 def get_files(*args):
     files = []
     if args:
