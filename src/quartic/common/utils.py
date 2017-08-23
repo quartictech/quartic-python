@@ -36,7 +36,6 @@ def get_module_specs(files):
     return module_specs
 
 def get_pipeline_steps(files):
-    print(files)
     steps = []
     modules = get_module_specs(files)
     for mspec in modules:

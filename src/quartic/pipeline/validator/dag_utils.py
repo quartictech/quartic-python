@@ -1,11 +1,8 @@
-import importlib.util
 import pprint
-import os.path
 import networkx as nx
-from quartic.utils import QuarticException
-from ..step import Step
-from .utils import save_graphviz, save_json
-from ..common import utils
+from quartic.common.exceptions import QuarticException
+from quartic.pipeline.validator.utils import save_graphviz, save_json
+from quartic.common.utils import get_files, get_pipeline_steps
 
 def build_dag(steps, default_namespace):
     assert steps
@@ -33,13 +30,13 @@ def check_dag(dag):
 
 def validate(steps=None):
     if not steps:
-        steps = get_pipeline_steps()
+        steps = get_pipeline_steps(get_files())
     # build the DAG and check it
     dag = build_dag(steps, "local-testing")
     return check_dag(dag)
 
 def graphviz():
-    steps = get_pipeline_steps()
+    steps = get_pipeline_steps(get_files())
     validate(steps)
     dag = build_dag(steps, "local-testing")
     raw_datasets = []
@@ -64,7 +61,7 @@ def graphviz():
     save_graphviz(dag, "graph.dot")
 
 def json():
-    steps = get_pipeline_steps()
+    steps = get_pipeline_steps(get_files())
     validate(steps)
     dag = build_dag(steps, "local-testing")
     raw_datasets = []
@@ -89,7 +86,7 @@ def json():
     save_json(dag, "graph.json")
 
 def describe():
-    steps = get_pipeline_steps()
+    steps = get_pipeline_steps(get_files())
     validate(steps)
     dag = build_dag(steps, "local-testing")
     raw_datasets = []
