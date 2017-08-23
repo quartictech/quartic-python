@@ -43,7 +43,7 @@ def run_user_code(f, exception_file):
 
 def main(args):
     if args.execute:
-        steps = run_user_code(lambda: utils.get_module_specs(), args.exception)
+        steps = run_user_code(utils.get_module_specs(), args.exception)
         execute_steps = [step for step in steps if step.get_id() == args.execute]
         quartic = Quartic("http://{service}.platform:{port}/api/")
         if len(execute_steps) > 1:
