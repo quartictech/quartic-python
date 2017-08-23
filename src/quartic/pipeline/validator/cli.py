@@ -13,6 +13,7 @@ def prep_parser():
     subparser.add_parser('graph')
     subparser.add_parser('json')
     subparser.add_parser('describe')
+    subparser.add_parser('init')
 
     return parser
 

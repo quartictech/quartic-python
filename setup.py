@@ -11,6 +11,7 @@ setup(name="quartic-python",
       package_dir={"":"src"},
       install_requires=[
           "requests==2.17.3",
+          "pyaml==17.8.0",
           "ipython==6.0.0",
           "datadiff==2.0.0",
           "pyarrow==0.4.0",
