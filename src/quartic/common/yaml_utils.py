@@ -2,16 +2,16 @@ import os
 import yaml
 
 default_config = dict(
-    version='0.1',
+    version="0.1",
     pipeline_directory="pipelines"
 )
 
 def write_default():
-    with open('quartic.yml', 'w') as yml_file:
+    with open("quartic.yml", "w") as yml_file:
         yaml.dump(default_config, yml_file, default_flow_style=False)
 
 def load_config(cfg):
-    with open(cfg, 'r') as yml_file:
+    with open(cfg, "r") as yml_file:
         return yaml.load(yml_file)
 
 def config(path=os.getcwd()):

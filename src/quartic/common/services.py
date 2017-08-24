@@ -32,7 +32,7 @@ class Service:
 
     @staticmethod
     def _quote(s):
-        return urllib.parse.quote(s, safe='')
+        return urllib.parse.quote(s, safe="")
 
     @staticmethod
     def _check(r, allow_404=False):
