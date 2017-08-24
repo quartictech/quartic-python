@@ -6,19 +6,24 @@ def find_python_files(d):
     files = []
     for f in os.listdir(d):
         if f.endswith(".py"):
-            files.append(f)
+            files.append(os.path.join(d, f))
         else:
             continue
     return files
 
-def get_files(files_and_dirs):
+def get_files(*args):
     files = []
-    for a in files_and_dirs:
+    for a in args:
         if os.path.isdir(a):
-            files.append(find_python_files(a))
+            files += find_python_files(a)
         if a.endswith(".py"):
             files.append(a)
-    return files
+    if files:
+        return files
+    else:
+        import sys
+        print("No files found for current config. Bailing.") #TODO - log this scenario
+        sys.exit(1)
 
 def get_module_specs(files):
     module_specs = [importlib.util.spec_from_file_location(f.strip('.py'), os.path.abspath(f)) for f in files]
