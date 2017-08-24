@@ -3,6 +3,7 @@ import networkx as nx
 from quartic.common.exceptions import QuarticException
 from quartic.pipeline.validator.utils import save_graphviz, save_json
 from quartic.common.utils import get_files, get_pipeline_steps
+from quartic.common import yaml_utils
 
 def build_dag(steps, default_namespace):
     assert steps
@@ -27,18 +28,26 @@ def check_dag(dag):
         raise QuarticException("graph is not a dag")
     else: return True
 
-
-def validate(steps=None):
+def valid_steps(steps=None):
+    cfg = yaml_utils.config()
     if not steps:
-        steps = get_pipeline_steps(get_files())
+        pipeline_dir = yaml_utils.attr_path_from_config(cfg['pipeline_directory'])
+        steps = get_pipeline_steps(get_files(pipeline_dir))
     # build the DAG and check it
     dag = build_dag(steps, "local-testing")
-    return check_dag(dag)
+    check_dag(dag)
+    return steps
+
+def valid_dag(steps=None):
+    dag = build_dag(valid_steps(steps), "local-testing")
+    check_dag(dag)
+    return dag
+
+def validate(steps=None):
+    return check_dag(valid_dag(steps))
 
 def graphviz():
-    steps = get_pipeline_steps(get_files())
-    validate(steps)
-    dag = build_dag(steps, "local-testing")
+    dag = valid_dag()
     raw_datasets = []
     materialise_datasets = []
     for node in nx.topological_sort(dag):
@@ -46,7 +55,6 @@ def graphviz():
             raw_datasets.append(node)
         else:
             materialise_datasets.append(node)
-
     # build list of steps to run in topological order
     run_steps = []
     for ds in materialise_datasets:
@@ -61,9 +69,7 @@ def graphviz():
     save_graphviz(dag, "graph.dot")
 
 def json():
-    steps = get_pipeline_steps(get_files())
-    validate(steps)
-    dag = build_dag(steps, "local-testing")
+    dag = valid_dag()
     raw_datasets = []
     materialise_datasets = []
     for node in nx.topological_sort(dag):
@@ -86,9 +92,7 @@ def json():
     save_json(dag, "graph.json")
 
 def describe():
-    steps = get_pipeline_steps(get_files())
-    validate(steps)
-    dag = build_dag(steps, "local-testing")
+    dag = valid_dag()
     raw_datasets = []
     materialise_datasets = []
     for node in nx.topological_sort(dag):
