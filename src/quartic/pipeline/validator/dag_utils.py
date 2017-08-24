@@ -3,6 +3,7 @@ import networkx as nx
 from quartic.common.exceptions import QuarticException
 from quartic.pipeline.validator.utils import save_graphviz, save_json
 from quartic.common.utils import get_files, get_pipeline_steps
+from quartic.common.yaml_utils import find_config
 
 def build_dag(steps, default_namespace):
     assert steps
@@ -29,8 +30,9 @@ def check_dag(dag):
 
 
 def validate(steps=None):
+
     if not steps:
-        steps = get_pipeline_steps(get_files())
+        steps = get_pipeline_steps(get_files(find_config()['pipeline_directory']))
     # build the DAG and check it
     dag = build_dag(steps, "local-testing")
     return check_dag(dag)

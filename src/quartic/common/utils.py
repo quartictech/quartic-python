@@ -11,18 +11,13 @@ def find_python_files(d):
             continue
     return files
 
-def get_files(*args):
+def get_files(files_and_dirs):
     files = []
-    if args:
-        for a in args:
-            if os.path.isdir(a):
-                files.append(find_python_files(a))
-            if a.endswith(".py"):
-                files.append(a)
-    else:
-        for f in os.listdir("."):
-            if f.endswith(".py"):
-                files.append(f)
+    for a in files_and_dirs:
+        if os.path.isdir(a):
+            files.append(find_python_files(a))
+        if a.endswith(".py"):
+            files.append(a)
     return files
 
 def get_module_specs(files):
