@@ -23,15 +23,13 @@ def config_path(path=None):
     if path is None:
         path = os.getcwd()
     if "quartic.yml" in os.listdir(path):
-        print("found yml file")
-        print(os.path.abspath(os.path.join(path, "quartic.yml")))
         return os.path.abspath(os.path.join(path, "quartic.yml"))
     else:
         parent_dir = os.path.join(path, os.pardir)
         if os.path.realpath(parent_dir) == os.path.realpath(path):
             return None
         elif os.access(parent_dir, os.R_OK) and os.access(parent_dir, os.X_OK):
-            config_path(parent_dir)
+            return config_path(parent_dir)
 
 def attr_paths_from_config(attribute):
     """Get list of paths for an attribute from the config
