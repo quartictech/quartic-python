@@ -1,7 +1,7 @@
 import sys
 import json
 from .cli import main, parse_args
-from ..common.exceptions import (ArgumentParserException,
+from quartic.common.exceptions import (ArgumentParserException,
     MultipleMatchingStepsException, NoMatchingStepsException,
     UserCodeExecutionException, ModuleNotFoundException)
 
