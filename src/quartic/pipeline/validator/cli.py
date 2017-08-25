@@ -1,4 +1,4 @@
-
+import sys
 import click
 from quartic.common import yaml_utils
 from quartic.pipeline.validator import dag_utils
@@ -10,9 +10,9 @@ def cli():
 @cli.command()
 def validate():
     config = yaml_utils.config_path()
+    print(yaml_utils.config_path('/.'))
     if config is None:
-        print("No quartic.yml file found. Generate one using qli init.")
-        import sys
+        click.echo("No quartic.yml file found. Generate one using qli init.")
         sys.exit(1)
     dag_utils.validate()
     click.echo("Pipelines are valid.")
@@ -21,7 +21,6 @@ def validate():
 def init():
     if yaml_utils.config_path():
         click.echo("quartic.yml exists. Bailing.")
-        import sys
         sys.exit(1)
     else:
         yaml_utils.write_default()

@@ -14,11 +14,17 @@ def load_config(cfg):
     with open(cfg, "r") as yml_file:
         return yaml.load(yml_file)
 
-def config(path=os.getcwd()):
+def config(path=None):
+    if path is None:
+        path = os.getcwd()
     return load_config(config_path(path))
 
-def config_path(path=os.getcwd()):
+def config_path(path=None):
+    if path is None:
+        path = os.getcwd()
     if "quartic.yml" in os.listdir(path):
+        print("found yml file")
+        print(os.path.abspath(os.path.join(path, "quartic.yml")))
         return os.path.abspath(os.path.join(path, "quartic.yml"))
     else:
         parent_dir = os.path.join(path, os.pardir)

@@ -2,7 +2,7 @@ import pprint
 import networkx as nx
 from quartic.common.exceptions import QuarticException
 from quartic.pipeline.validator.utils import save_graphviz, save_json
-from quartic.common.utils import get_files, get_pipeline_steps, get_pipeline_from_args
+from quartic.common.utils import get_pipeline_from_args
 from quartic.common import yaml_utils
 
 def build_dag(steps, default_namespace):
