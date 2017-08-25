@@ -11,9 +11,9 @@ def find_python_files(d):
             continue
     return files
 
-def get_files(*args):
+def get_files(dirs_and_files):
     files = []
-    for a in args:
+    for a in dirs_and_files:
         if os.path.isdir(a):
             files += find_python_files(a)
         if a.endswith(".py"):
@@ -42,3 +42,7 @@ def get_pipeline_steps(files):
                 steps.append(v)
     assert steps
     return steps
+
+def get_pipeline_from_args(dirs_and_files):
+    files = get_files(dirs_and_files)
+    return get_pipeline_steps(files)
