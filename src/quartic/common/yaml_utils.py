@@ -27,7 +27,9 @@ def config_path(path=os.getcwd()):
         elif os.access(parent_dir, os.R_OK) and os.access(parent_dir, os.X_OK):
             config_path(parent_dir)
 
-def attr_path_from_config(attribute):
+def attr_paths_from_config(attribute):
+    """Get list of paths for an attribute from the config
+    file."""
     cfg_path = config_path()
-    return os.path.abspath(
-        os.path.join(os.path.dirname(cfg_path), attribute))
+    return [os.path.abspath(
+        os.path.join(os.path.dirname(cfg_path), attribute))]

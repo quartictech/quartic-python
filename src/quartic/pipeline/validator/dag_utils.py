@@ -31,7 +31,7 @@ def check_dag(dag):
 def valid_steps(steps=None):
     cfg = yaml_utils.config()
     if not steps:
-        pipeline_dir = yaml_utils.attr_path_from_config(cfg['pipeline_directory'])
+        pipeline_dir = yaml_utils.attr_paths_from_config(cfg['pipeline_directory'])
         steps = get_pipeline_from_args(pipeline_dir)
     # build the DAG and check it
 
