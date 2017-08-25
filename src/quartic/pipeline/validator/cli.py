@@ -10,7 +10,6 @@ def cli():
 @cli.command()
 def validate():
     config = yaml_utils.config_path()
-    print(yaml_utils.config_path('/.'))
     if config is None:
         click.echo("No quartic.yml file found. Generate one using qli init.")
         sys.exit(1)
