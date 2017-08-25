@@ -37,11 +37,7 @@ def _raise_if_any_mixed_type_columns(df):
     bad_columns = [c for c in df.columns if len(set([type(x) for x in df[c].unique() if x is not None])) > 1]
     if bad_columns:
         raise ValueError("Cannot write columns with mixed types: {}".format(bad_columns))
-        
-def raise_if_invalid_coord(*coords):
-    for coord in coords:
-        if coord and ":" in coord:
-            raise ValueError("Dataset coordinate cannot contain ':' character")
+
 
 def _write_parquet(df, f):
     import pyarrow.parquet as pq

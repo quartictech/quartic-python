@@ -2,10 +2,10 @@ import json
 import os.path
 import pytest
 from mock import Mock, MagicMock
-from quartic import QuarticException
+from quartic.common.exceptions import QuarticException, UserCodeExecutionException
 from quartic.common.step import step, Step
 from quartic.common.dataset import Dataset, writer
-from quartic.pipeline.runner.cli import main, parse_args, UserCodeExecutionException
+from quartic.pipeline.runner.cli import main, parse_args 
 
 class TestCli:
     def test_evaluate_dag(self, tmpdir):

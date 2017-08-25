@@ -1,5 +1,10 @@
-from .io import raise_if_invalid_coord
 from .exceptions import QuarticException
+
+
+def raise_if_invalid_coord(*coords):
+    for coord in coords:
+        if coord and ":" in coord:
+            raise ValueError("Dataset coordinate cannot contain ':' character")
 
 class Dataset:
     def __init__(self, dataset_id, namespace=None):
@@ -43,6 +48,7 @@ class Dataset:
             "namespace": self.namespace,
             "dataset_id": self.dataset_id
         }
+
 
     @staticmethod
     def parse(s):

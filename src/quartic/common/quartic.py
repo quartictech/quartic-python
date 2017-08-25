@@ -1,6 +1,7 @@
 import requests
 
-from .io import DatasetWriter, DatasetReader, RemoteIoFactory, raise_if_invalid_coord
+from .io import DatasetWriter, DatasetReader, RemoteIoFactory
+from quartic.common.dataset import raise_if_invalid_coord
 from .services import Howl, Catalogue
 from .exceptions import QuarticException
 
