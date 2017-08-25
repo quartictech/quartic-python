@@ -2,7 +2,7 @@ import argparse
 import sys
 import json
 import traceback
-from quartic import Quartic
+from quartic.common.quartic import Quartic
 from quartic.common.exceptions import *
 from quartic.common import utils
 
