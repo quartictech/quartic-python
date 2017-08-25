@@ -3,31 +3,28 @@ import click
 from quartic.common import yaml_utils
 from quartic.pipeline.validator import dag_utils
 
-def prep_parser():
-    @click.group()
-    def cli():
-        pass
+@click.group()
+def cli():
+    pass
 
-    @cli.command()
-    def validate():
-        config = yaml_utils.config_path()
-        if config is None:
-            print("No quartic.yml file found. Generate one using qli init.")
-            import sys
-            sys.exit(1)
-        dag_utils.validate()
-        click.echo("Pipelines are valid.")
+@cli.command()
+def validate():
+    config = yaml_utils.config_path()
+    if config is None:
+        print("No quartic.yml file found. Generate one using qli init.")
+        import sys
+        sys.exit(1)
+    dag_utils.validate()
+    click.echo("Pipelines are valid.")
 
-    @cli.command()
-    def init():
-        if yaml_utils.config_path():
-            click.echo("quartic.yml exists. Bailing.")
-            import sys
-            sys.exit(1)
-        else:
-            yaml_utils.write_default()
-
-    return cli
+@cli.command()
+def init():
+    if yaml_utils.config_path():
+        click.echo("quartic.yml exists. Bailing.")
+        import sys
+        sys.exit(1)
+    else:
+        yaml_utils.write_default()
 
     # subparser.add_parser("validate")
     # subparser.add_parser("graph")

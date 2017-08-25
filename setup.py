@@ -8,6 +8,7 @@ setup(name="quartic-python",
       author_email="contact@quartic.io",
       license="BSD",
       packages=find_packages("src"),
+      imclude_package_data=True,
       package_dir={"":"src"},
       install_requires=[
           "pyaml==17.8.0",
@@ -24,4 +25,8 @@ setup(name="quartic-python",
               "requests==2.17.3",
               "datadiff==2.0.0"]
       },
-      scripts=["bin/qli"])
+      entry_points={
+          "console_scripts": [
+              "qli = quartic.pipeline.validator.cli:cli"
+          ]
+      })
