@@ -11,7 +11,6 @@ setup(name="quartic-python",
       package_dir={"":"src"},
       install_requires=[
           "pyaml==17.8.0",
-
           "networkx==1.11"
       ],
       extras_require={
