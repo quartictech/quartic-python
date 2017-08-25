@@ -6,7 +6,9 @@ default_config = dict(
     pipeline_directory="pipelines"
 )
 
-def write_default():
+def write_default(path=None):
+    if path is None:
+        path = os.getcwd()
     with open("quartic.yml", "w") as yml_file:
         yaml.dump(default_config, yml_file, default_flow_style=False)
 
