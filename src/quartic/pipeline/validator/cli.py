@@ -1,7 +1,7 @@
 
 import click
 from quartic.common import yaml_utils
-from .dag_utils import validate, graphviz, json, describe
+from quartic.pipeline.validator.dag_utils import validate, graphviz, json, describe
 
 def prep_parser():
     @click.group()
@@ -16,11 +16,13 @@ def prep_parser():
     @cli.command()
     def init():
         if yaml_utils.config_path():
-            print("quartic.yml exists. Bailing.")
+            click.echo("quartic.yml exists. Bailing.")
             import sys
             sys.exit(1)
         else:
             yaml_utils.write_default()
+
+    return cli
 
     # subparser.add_parser("validate")
     # subparser.add_parser("graph")
@@ -28,7 +30,6 @@ def prep_parser():
     # subparser.add_parser("describe")
     # subparser.add_parser("init")
 
-    return cli
 
     # if args.command != "init":
     #     config = yaml_utils.config_path()
@@ -52,6 +53,3 @@ def prep_parser():
     #         sys.exit(1)
     #     else:
     #         yaml_utils.write_default()
-
-if __name__ == "__main__":
-    cli = prep_parser()

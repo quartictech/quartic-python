@@ -2,4 +2,5 @@
 # -*- coding: utf-8 -*-
 
 from quartic.pipeline.validator import cli
-cli.main()
+qli = cli.prep_parser()
+qli()
