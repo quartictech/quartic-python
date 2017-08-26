@@ -5,10 +5,10 @@ from mock import Mock, MagicMock
 from quartic.common.exceptions import QuarticException, UserCodeExecutionException
 from quartic.common.step import step, Step
 from quartic.common.dataset import Dataset, writer
-from quartic.pipeline.runner.cli import main, parse_args 
+from quartic.pipeline.runner.cli import main, parse_args
 
 class TestCli:
-    def test_evaluate_dag(self, tmpdir):
+    def test_evaluate_good_dag(self, tmpdir):
         output_path = os.path.join(tmpdir, "steps.json")
         args = parse_args(["--evaluate", output_path, "tests/quartic/pipeline/good_dag.py"])
         main(args)
@@ -31,6 +31,25 @@ class TestCli:
         args = parse_args(["--evaluate", output_path, "tests/quartic/pipeline/bad_dag.py"])
         with pytest.raises(UserCodeExecutionException) as e:
             main(args)
+
+    def test_evaluate_multi_dag(self, tmpdir):
+        output_path = os.path.join(tmpdir, "steps.json")
+        args = parse_args(["--evaluate", output_path,
+        "tests/quartic/pipeline/multi_dag.py"])
+        main(args)
+        steps = json.load(open(output_path))
+        assert len(steps) == 2
+
+        steps.sort(key=lambda x: x["name"])
+        assert steps[0]["name"] == "step1"
+        assert steps[0]["description"] == "A description"
+        assert steps[0]["file"] == "tests/quartic/pipeline/multi_dag.py"
+        assert steps[0]["line_range"] == [11, 14]
+
+        assert steps[1]["name"] == "step2"
+        assert steps[1]["description"] == "Another description"
+        assert steps[1]["file"] == "tests/quartic/pipeline/multi_dag.py"
+        assert steps[1]["line_range"] == [16, 19]
 
     def test_execute_step(self, tmpdir):
         output_path = os.path.join(tmpdir, "steps.json")
