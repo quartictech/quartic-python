@@ -29,8 +29,7 @@ def validate():
             for ds, steps in msteps.items():
                 click.secho("\t{}:".format(ds), bold=True)
                 for s in steps:
-                    click.secho("\t\t{} in {}".format(s.get_name(), s._file))
-
+                    click.secho("\t\t{} in {}".format(s.get_name(), s.get_file()))
 
 @cli.command()
 def status():
