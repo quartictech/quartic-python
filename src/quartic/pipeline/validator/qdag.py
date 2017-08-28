@@ -1,7 +1,6 @@
 from functools import reduce
 from quartic.pipeline.validator import dag_utils
 from quartic.common.exceptions import QuarticException
-import pprint
 
 class QuarticDag:
     def __init__(self, nx_graph):

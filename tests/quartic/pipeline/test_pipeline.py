@@ -7,10 +7,12 @@ from quartic.common.step import step, Step
 from quartic.common.dataset import Dataset, writer
 from quartic.pipeline.runner.cli import main, parse_args
 
+resources_dir = "tests/resources"
+
 class TestCli:
     def test_evaluate_good_dag(self, tmpdir):
         output_path = os.path.join(tmpdir, "steps.json")
-        args = parse_args(["--evaluate", output_path, "tests/quartic/pipeline/good_dag.py"])
+        args = parse_args(["--evaluate", output_path, os.path.join(resources_dir, "good_dag.py")])
         main(args)
         steps = json.load(open(output_path))
         assert len(steps) == 2
@@ -18,24 +20,25 @@ class TestCli:
         steps.sort(key=lambda x: x["name"])
         assert steps[0]["name"] == "step1"
         assert steps[0]["description"] == "First step"
-        assert steps[0]["file"] == "tests/quartic/pipeline/good_dag.py"
+        assert steps[0]["file"] == os.path.join(resources_dir, "good_dag.py")
         assert steps[0]["line_range"] == [11, 14]
 
         assert steps[1]["name"] == "step2"
         assert steps[1]["description"] == "Second step"
-        assert steps[1]["file"] == "tests/quartic/pipeline/good_dag.py"
+        assert steps[1]["file"] == os.path.join(resources_dir, "good_dag.py")
         assert steps[1]["line_range"] == [16, 19]
+
 
     def test_evaluate_bad_dag(self, tmpdir):
         output_path = os.path.join(tmpdir, "steps.json")
-        args = parse_args(["--evaluate", output_path, "tests/quartic/pipeline/bad_dag.py"])
-        with pytest.raises(UserCodeExecutionException) as e:
+        args = parse_args(["--evaluate", output_path, os.path.join(resources_dir, "bad_dag.py")])
+        with pytest.raises(UserCodeExecutionException):
             main(args)
+
 
     def test_evaluate_disjoint_dag(self, tmpdir):
         output_path = os.path.join(tmpdir, "steps.json")
-        args = parse_args(["--evaluate", output_path,
-        "tests/quartic/pipeline/disjoint_dag.py"])
+        args = parse_args(["--evaluate", output_path, os.path.join(resources_dir, "disjoint_dag.py")])
         main(args)
         steps = json.load(open(output_path))
         assert len(steps) == 2
@@ -43,22 +46,25 @@ class TestCli:
         steps.sort(key=lambda x: x["name"])
         assert steps[0]["name"] == "step1"
         assert steps[0]["description"] == "A description"
-        assert steps[0]["file"] == "tests/quartic/pipeline/disjoint_dag.py"
+        assert steps[0]["file"] == os.path.join(resources_dir, "disjoint_dag.py")
         assert steps[0]["line_range"] == [11, 14]
 
         assert steps[1]["name"] == "step2"
         assert steps[1]["description"] == "Another description"
-        assert steps[1]["file"] == "tests/quartic/pipeline/disjoint_dag.py"
+        assert steps[1]["file"] == os.path.join(resources_dir, "disjoint_dag.py")
         assert steps[1]["line_range"] == [16, 19]
+
 
     def test_execute_step(self, tmpdir):
         output_path = os.path.join(tmpdir, "steps.json")
-        args = parse_args(["--evaluate", output_path, "tests/quartic/pipeline/good_dag.py"])
+        args = parse_args(["--evaluate", output_path, os.path.join(resources_dir, "good_dag.py")])
         main(args)
 
         steps = json.load(open(output_path))
-        args = parse_args(["--execute", steps[0]["id"], "--namespace", "test", "tests/quartic/pipeline/good_dag.py"])
+        args = parse_args(["--execute", steps[0]["id"], "--namespace", "test",
+                           os.path.join(resources_dir, "good_dag.py")])
         main(args)
+
 
 class TestDataset:
     def test_init(self):

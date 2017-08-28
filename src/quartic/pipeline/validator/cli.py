@@ -1,6 +1,5 @@
 import sys
 import click
-import networkx as nx
 from quartic.common import yaml_utils
 from quartic.pipeline.validator import dag_utils
 from quartic.pipeline.validator import qdag as qd

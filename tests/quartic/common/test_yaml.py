@@ -1,6 +1,5 @@
-from quartic.common import yaml_utils
-import pytest
 import os
+from quartic.common import yaml_utils
 
 class TestYamlConfigFinder:
     def test_no_config(self, tmpdir):

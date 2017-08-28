@@ -8,11 +8,6 @@ from mock import Mock, call
 
 
 class TestBasics:
-    def test_service_url(self):
-        q = Quartic("http://localhost:{port}/api/")
-        assert q._howl._url("wwwa") == "http://localhost:8120/api/wwwa"
-
-
     def test_dataset_syntax(self):
         q = Quartic("http://localhost:{port}/api/")
         dataset = q("foo").dataset("bar")

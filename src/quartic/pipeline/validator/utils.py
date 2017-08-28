@@ -14,8 +14,8 @@ def common_prefix(strings):
             prefix = prefix[:len(s)]
         if not prefix:
             return ''
-        for i in range(len(prefix)):
-            if prefix[i] != s[i]:
+        for i, p in enumerate(prefix):
+            if p != s[i]:
                 prefix = prefix[:i]
                 break
     return prefix
@@ -30,9 +30,8 @@ def contract_inputs(dag, n):
 
     for ns in contract.keys():
         if len(contract[ns]) > 5:
-            prefix = common_prefix([c.dataset_id for c in contract[ns]])
-            for n in contract[ns][1:]:
-                dag.remove_node(n)
+            for node in contract[ns][1:]:
+                dag.remove_node(node)
             node = dag.node[contract[ns][0]]
             node["label"] = "{}\n + {} more".format(contract[ns][0], len(contract[ns]) - 1)
             node["style"] = "dotted"

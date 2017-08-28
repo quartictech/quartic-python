@@ -63,13 +63,13 @@ class DatasetReader(object):
         self._io_factory = io_factory
 
     def csv(self, *args, **kwargs):
-        return _read_csv(self._io_factory._url, *args, **kwargs)    # TODO - assumption about _url here!
+        return _read_csv(self._io_factory.url(), *args, **kwargs)    # TODO - assumption about url() here!
 
     def parquet(self):
         return _read_parquet(self._io_factory.readable_file())
 
     def raw(self):
-        return urllib.request.urlopen(self._io_factory._url)    # TODO - assumption about _url here!
+        return urllib.request.urlopen(self._io_factory.url())    # TODO - assumption about url() here!
 
     def json(self):
         # TODO: switch to using json.load() once decoding issues figured out
@@ -186,3 +186,6 @@ class RemoteIoFactory:
 
     def readable_file(self, mode="r+b"):
         return DownloadFile(self._url)
+
+    def url(self):
+        return self._url

@@ -17,7 +17,13 @@ pip install -r requirements.txt
 ## Running tests
 
 ```
-python -m pytest [-s]
+python setup.py test
+```
+
+## Running linter
+
+```
+python setup.py lint
 ```
 
 ## Adding new dependencies
