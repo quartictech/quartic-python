@@ -6,7 +6,7 @@ from quartic.common.utils import get_pipeline_from_args
 from quartic.common import yaml_utils
 
 
-def build_dag(steps, default_namespace='default'):
+def build_dag(steps, default_namespace="default"):
     assert steps
     datasets = set()
     for step in steps:
@@ -28,19 +28,17 @@ def build_dag(steps, default_namespace='default'):
 def get_graph(steps=None):
     cfg = yaml_utils.config()
     if not steps:
-        pipeline_dir = yaml_utils.attr_paths_from_config(cfg['pipeline_directory'])
+        pipeline_dir = yaml_utils.attr_paths_from_config(cfg["pipeline_directory"])
         steps = get_pipeline_from_args(pipeline_dir)
     return build_dag(steps, "local-testing")
 
 def check_dag(dag):
-    if not nx.is_directed_acyclic_graph(dag):
-        raise QuarticException("graph is not a dag")
-    else: return True
+    return nx.is_directed_acyclic_graph(dag)
 
 def valid_steps(steps=None):
     cfg = yaml_utils.config()
     if not steps:
-        pipeline_dir = yaml_utils.attr_paths_from_config(cfg['pipeline_directory'])
+        pipeline_dir = yaml_utils.attr_paths_from_config(cfg["pipeline_directory"])
         steps = get_pipeline_from_args(pipeline_dir)
     # build the DAG and check it
     dag = build_dag(steps, "local-testing")

@@ -19,5 +19,4 @@ class TestYamlConfigFinder:
         os.chdir(tmpdir)
         yaml_utils.write_default()
         os.chdir(old_path)
-        # print(yaml_utils.config_path(os.path.join(tmpdir, 'test')))
         assert yaml_utils.config_path(os.path.join(tmpdir, 'test')) is not None
