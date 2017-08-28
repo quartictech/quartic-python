@@ -19,7 +19,7 @@ def cli():
 def validate():
     check_for_config()
     graph = dag_utils.get_graph()
-    if dag_utils.check_dag(graph):
+    if dag_utils.is_valid_dag(graph):
         qdag = qd.QuarticDag(graph)
         if qdag.one_step_per_ds():
             click.secho("Pipeline is valid.", fg="green")

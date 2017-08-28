@@ -6,7 +6,7 @@ import pprint
 class QuarticDag:
     def __init__(self, nx_graph):
         self.graph = nx_graph
-        if not dag_utils.check_dag(self.graph):
+        if not dag_utils.is_valid_dag(self.graph):
             raise QuarticException("Not a DAG.")
 
     def input_nodes(self):

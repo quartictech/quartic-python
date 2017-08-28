@@ -32,7 +32,7 @@ def get_graph(steps=None):
         steps = get_pipeline_from_args(pipeline_dir)
     return build_dag(steps, "local-testing")
 
-def check_dag(dag):
+def is_valid_dag(dag):
     return nx.is_directed_acyclic_graph(dag)
 
 def valid_steps(steps=None):
@@ -42,13 +42,17 @@ def valid_steps(steps=None):
         steps = get_pipeline_from_args(pipeline_dir)
     # build the DAG and check it
     dag = build_dag(steps, "local-testing")
-    check_dag(dag)
-    return steps
+    if is_valid_dag(dag):
+        return steps
+    else:
+        raise QuarticException("Invalid DAG")
 
 def valid_dag(steps=None):
     dag = build_dag(valid_steps(steps), "local-testing")
-    check_dag(dag)
-    return dag
+    if is_valid_dag(dag):
+        return dag
+    else:
+        raise QuarticException("Invalid DAG")
 
 def graphviz():
     dag = valid_dag()
