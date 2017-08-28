@@ -41,6 +41,12 @@ class Step:
         datasets = list(self.inputs()) + list(self.outputs())
         return str(zlib.adler32("\n".join([str(d) for d in datasets]).encode()))
 
+    def get_file(self):
+        return self._file
+
+    def get_name(self):
+        return self.name
+
     def inputs(self):
         for v in self._inputs.values():
             if isinstance(v, Dataset):
@@ -49,7 +55,6 @@ class Step:
                 for v2 in v.values():
                     yield v2
 
-    # TODO - this is weird now
     def outputs(self):
         yield self._output
 

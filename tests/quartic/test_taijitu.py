@@ -1,5 +1,4 @@
-from quartic import Quartic, QuarticException
-from quartic.common.quartic import Dataset
+from quartic.common.quartic import Quartic, QuarticException, Dataset
 import pytest
 from mock import Mock, call
 

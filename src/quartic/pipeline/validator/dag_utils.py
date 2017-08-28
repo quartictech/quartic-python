@@ -2,10 +2,11 @@ import pprint
 import networkx as nx
 from quartic.common.exceptions import QuarticException
 from quartic.pipeline.validator.utils import save_graphviz, save_json
-from quartic.common.utils import get_files, get_pipeline_steps, get_pipeline_from_args
+from quartic.common.utils import get_pipeline_from_args
 from quartic.common import yaml_utils
 
-def build_dag(steps, default_namespace):
+
+def build_dag(steps, default_namespace="default"):
     assert steps
     datasets = set()
     for step in steps:
@@ -21,31 +22,37 @@ def build_dag(steps, default_namespace):
             for o in step.outputs():
                 g.add_edge(i.fully_qualified(default_namespace),
                            o.fully_qualified(default_namespace), label=step.name, step=step)
+
     return g
 
-def check_dag(dag):
-    if not nx.is_directed_acyclic_graph(dag):
-        raise QuarticException("graph is not a dag")
-    else: return True
+def get_graph(steps=None):
+    cfg = yaml_utils.config()
+    if not steps:
+        pipeline_dir = yaml_utils.attr_paths_from_config(cfg["pipeline_directory"])
+        steps = get_pipeline_from_args(pipeline_dir)
+    return build_dag(steps, "local-testing")
+
+def is_valid_dag(dag):
+    return nx.is_directed_acyclic_graph(dag)
 
 def valid_steps(steps=None):
     cfg = yaml_utils.config()
     if not steps:
-        pipeline_dir = yaml_utils.attr_path_from_config(cfg['pipeline_directory'])
+        pipeline_dir = yaml_utils.attr_paths_from_config(cfg["pipeline_directory"])
         steps = get_pipeline_from_args(pipeline_dir)
     # build the DAG and check it
-
     dag = build_dag(steps, "local-testing")
-    check_dag(dag)
-    return steps
+    if is_valid_dag(dag):
+        return steps
+    else:
+        raise QuarticException("Invalid DAG")
 
 def valid_dag(steps=None):
     dag = build_dag(valid_steps(steps), "local-testing")
-    check_dag(dag)
-    return dag
-
-def validate(steps=None):
-    return check_dag(valid_dag(steps))
+    if is_valid_dag(dag):
+        return dag
+    else:
+        raise QuarticException("Invalid DAG")
 
 def graphviz():
     dag = valid_dag()
