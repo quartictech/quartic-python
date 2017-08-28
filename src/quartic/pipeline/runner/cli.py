@@ -22,7 +22,7 @@ def parse_args(argv):
     parser.add_argument("--exception", metavar="EXCEPTION_FILE", default="exception.json",
                         type=str, help="path of file to output error information")
     parser.add_argument("--namespace", metavar="NAMESPACE", type=str, help="path of file to output error information")
-    parser.add_argument("pipelines", metavar="PIPELINES", type=str, nargs='+')
+    parser.add_argument("pipelines", metavar="PIPELINES", type=str, nargs="+")
 
     args = parser.parse_args(argv)
     if not (args.execute or args.evaluate) or (args.execute and args.evaluate):

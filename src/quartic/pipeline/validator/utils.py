@@ -7,13 +7,13 @@ def common_prefix(strings):
     """ Find the longest string that is a prefix of all the strings.
     """
     if not strings:
-        return ''
+        return ""
     prefix = strings[0]
     for s in strings:
         if len(s) < len(prefix):
             prefix = prefix[:len(s)]
         if not prefix:
-            return ''
+            return ""
         for i, p in enumerate(prefix):
             if p != s[i]:
                 prefix = prefix[:i]

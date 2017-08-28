@@ -4,7 +4,8 @@ from setuptools import setup, find_packages
 test_deps = [
           "mock==2.0.0",
           "pytest==3.0.7",
-          "pylint==1.7.1",    
+          "pylint==1.7.1",
+          "pylint-quotes==0.1.5"
 ]
 
 setup(name="quartic-python",

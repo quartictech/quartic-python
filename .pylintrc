@@ -463,3 +463,8 @@ analyse-fallback-blocks=no
 # Exceptions that will emit a warning when being caught. Defaults to
 # "Exception"
 overgeneral-exceptions=Exception
+
+[QUOTES]
+string-quote=double
+triple-quote=double
+docstring-quote=double

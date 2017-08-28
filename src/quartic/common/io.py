@@ -22,7 +22,7 @@ def _read_csv(*args, coerce_mixed_types=True, target_type=str, **kwargs):
                 print("Warning message:", s)
                 match = re.search(r"Columns \(([0-9,]+)\) have mixed types\.", s)
                 if match:
-                    columns = match.group(1).split(',') # Get columns as a list
+                    columns = match.group(1).split(",") # Get columns as a list
                     columns = [int(c) for c in columns]
                     print("Applying %s dtype to columns:" % target_type, columns)
                     df.iloc[:, columns] = df.iloc[:, columns].astype(target_type)
@@ -136,7 +136,7 @@ class DownloadFile:
         self.close()
 
 class UploadFile:
-    def __init__(self, url, method, mode='w+b'):
+    def __init__(self, url, method, mode="w+b"):
         self._url = url
         self._tmp = tempfile.SpooledTemporaryFile(max_size=10 * 1024 * 1024, mode=mode)
         self._method = method

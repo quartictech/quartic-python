@@ -19,7 +19,7 @@ class QuarticDag:
     def steps_per_ds(self):
         output_steps = {}
         for edge in self.graph.edges(data=True):
-            step = edge[2]['step']
+            step = edge[2]["step"]
             for output in step.outputs():
                 if output not in output_steps.keys():
                     output_steps[output] = [step]
