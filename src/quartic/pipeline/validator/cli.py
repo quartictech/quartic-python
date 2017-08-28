@@ -13,10 +13,11 @@ def check_for_config():
 
 @click.group()
 def cli():
-    check_for_config()
+    pass
 
 @cli.command()
 def validate():
+    check_for_config()
     graph = dag_utils.get_graph()
     if dag_utils.check_dag(graph):
         qdag = qd.QuarticDag(graph)
@@ -33,6 +34,7 @@ def validate():
 
 @cli.command()
 def status():
+    check_for_config()
     graph = dag_utils.get_graph()
     qdag = qd.QuarticDag(graph)
     n_nodes = qdag.num_datasets()
