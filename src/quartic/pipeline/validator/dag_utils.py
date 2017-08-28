@@ -1,41 +1,10 @@
 import pprint
 import networkx as nx
-from functools import reduce
 from quartic.common.exceptions import QuarticException
 from quartic.pipeline.validator.utils import save_graphviz, save_json
 from quartic.common.utils import get_pipeline_from_args
 from quartic.common import yaml_utils
 
-class QuarticDag:
-    def __init__(self, nx_graph):
-        self.graph = nx_graph
-
-    def input_nodes(self):
-        in_degrees = self.graph.in_degree()
-        return [k for k, v in in_degrees.items() if v == 0]
-
-    def output_nodes(self):
-        out_degrees = self.graph.out_degree()
-        return [k for k, v in out_degrees.items() if v == 0]
-
-    def steps_per_ds(self):
-        output_steps = {}
-        for edge in self.graph.edges(data=True):
-            step = edge[2]['step']
-            for output in step.outputs():
-                if output not in output_steps.keys():
-                    output_steps[output] = [step]
-                else:
-                    output_steps[output].append(step)
-        return output_steps
-
-    def one_step_per_ds(self):
-        output_steps = self.steps_per_ds()
-        single_steps = [len(set(v)) == 1 for _, v in output_steps.items()]
-        return reduce(lambda a, b: a and b, single_steps)
-
-    def num_datasets(self):
-        return self.graph.order()
 
 def build_dag(steps, default_namespace='default'):
     assert steps
@@ -63,9 +32,6 @@ def get_graph(steps=None):
         steps = get_pipeline_from_args(pipeline_dir)
     return build_dag(steps, "local-testing")
 
-def check_one_step_per_ds(dag):
-    pass
-
 def check_dag(dag):
     if not nx.is_directed_acyclic_graph(dag):
         raise QuarticException("graph is not a dag")
@@ -85,9 +51,6 @@ def valid_dag(steps=None):
     dag = build_dag(valid_steps(steps), "local-testing")
     check_dag(dag)
     return dag
-
-def validate(steps=None):
-    return check_dag(valid_dag(steps))
 
 def graphviz():
     dag = valid_dag()

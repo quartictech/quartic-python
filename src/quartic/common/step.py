@@ -41,6 +41,9 @@ class Step:
         datasets = list(self.inputs()) + list(self.outputs())
         return str(zlib.adler32("\n".join([str(d) for d in datasets]).encode()))
 
+    def get_file(self):
+        return self._file
+
     def get_name(self):
         return self.name
 
