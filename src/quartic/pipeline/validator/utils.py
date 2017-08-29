@@ -2,23 +2,6 @@ import json
 from collections import defaultdict
 import pprint
 from networkx.drawing.nx_agraph import write_dot
-# https://stackoverflow.com/questions/2892931/longest-common-substring-from-more-than-two-strings-python
-def common_prefix(strings):
-    """ Find the longest string that is a prefix of all the strings.
-    """
-    if not strings:
-        return ""
-    prefix = strings[0]
-    for s in strings:
-        if len(s) < len(prefix):
-            prefix = prefix[:len(s)]
-        if not prefix:
-            return ""
-        for i, p in enumerate(prefix):
-            if p != s[i]:
-                prefix = prefix[:i]
-                break
-    return prefix
 
 def contract_inputs(dag, n):
     predecessors = dag.predecessors(n[0])
