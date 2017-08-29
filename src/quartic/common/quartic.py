@@ -1,7 +1,8 @@
+# pylint: disable=too-many-arguments
 import requests
 
-from .io import DatasetWriter, DatasetReader, RemoteIoFactory
 from quartic.common.dataset import raise_if_invalid_coord
+from .io import DatasetWriter, DatasetReader, RemoteIoFactory
 from .services import Howl, Catalogue
 from .exceptions import QuarticException
 
@@ -17,11 +18,11 @@ class Quartic:
     def _notebook_name(self):
         # WEIRD WEIRD HACK
         try:
-            conn_file = self.shell.config['IPKernelApp']['connection_file'].split('/')[-1]
+            conn_file = self.shell.config["IPKernelApp"]["connection_file"].split("/")[-1]
             kernel_id = conn_file.split(".")[0].split("-", 1)[1]
             notebooks = requests.get("http://localhost:8888/analysis/api/sessions").json()
-            return [nb for nb in notebooks if nb["kernel"]["id"] == kernel_id][0]['path']
-        except:
+            return [nb for nb in notebooks if nb["kernel"]["id"] == kernel_id][0]["path"]
+        except: # pylint: disable=bare-except
             return None
 
 

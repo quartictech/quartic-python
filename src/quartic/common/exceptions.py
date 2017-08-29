@@ -1,6 +1,7 @@
+import traceback
+
 class RunnerException(Exception):
-    def __init__(self, message):
-        super(RunnerException, self).__init__(message)
+    pass
 
 class ArgumentParserException(RunnerException):
     def __init__(self, parser, message):
@@ -20,16 +21,19 @@ class NoMatchingStepsException(RunnerException):
         self.step_id = step_id
 
 class UserCodeExecutionException(RunnerException):
-    def __init__(self, exception, formatted_exception, tb, file_name,
-                 line_number, exception_type, exception_args):
+    def __init__(self, exception, tb):
         super(UserCodeExecutionException, self).__init__("Exception while executing user code")
+        extracted_tb = traceback.extract_tb(tb)
         self._exception = exception
-        self.formatted_exception = formatted_exception
-        self.traceback = tb
-        self.file_name = file_name
-        self.line_number = line_number
-        self.exception_type = exception_type
-        self.exception_args = exception_args
+        self.formatted_exception = traceback.format_exc()
+        self.traceback = traceback.format_tb(tb)
+        self.file_name = extracted_tb[-1].filename
+        self.line_number = extracted_tb[-1].lineno
+        self.exception_type = type(exception).__name__
+        self.exception_args = exception.args
+
+    def exception(self):
+        return self._exception
 
 class ModuleNotFoundException(RunnerException):
     def __init__(self, module):

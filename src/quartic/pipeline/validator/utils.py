@@ -2,23 +2,6 @@ import json
 from collections import defaultdict
 import pprint
 from networkx.drawing.nx_agraph import write_dot
-# https://stackoverflow.com/questions/2892931/longest-common-substring-from-more-than-two-strings-python
-def common_prefix(strings):
-    """ Find the longest string that is a prefix of all the strings.
-    """
-    if not strings:
-        return ''
-    prefix = strings[0]
-    for s in strings:
-        if len(s) < len(prefix):
-            prefix = prefix[:len(s)]
-        if not prefix:
-            return ''
-        for i in range(len(prefix)):
-            if prefix[i] != s[i]:
-                prefix = prefix[:i]
-                break
-    return prefix
 
 def contract_inputs(dag, n):
     predecessors = dag.predecessors(n[0])
@@ -30,9 +13,8 @@ def contract_inputs(dag, n):
 
     for ns in contract.keys():
         if len(contract[ns]) > 5:
-            prefix = common_prefix([c.dataset_id for c in contract[ns]])
-            for n in contract[ns][1:]:
-                dag.remove_node(n)
+            for node in contract[ns][1:]:
+                dag.remove_node(node)
             node = dag.node[contract[ns][0]]
             node["label"] = "{}\n + {} more".format(contract[ns][0], len(contract[ns]) - 1)
             node["style"] = "dotted"

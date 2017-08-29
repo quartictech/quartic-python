@@ -22,7 +22,7 @@ def _read_csv(*args, coerce_mixed_types=True, target_type=str, **kwargs):
                 print("Warning message:", s)
                 match = re.search(r"Columns \(([0-9,]+)\) have mixed types\.", s)
                 if match:
-                    columns = match.group(1).split(',') # Get columns as a list
+                    columns = match.group(1).split(",") # Get columns as a list
                     columns = [int(c) for c in columns]
                     print("Applying %s dtype to columns:" % target_type, columns)
                     df.iloc[:, columns] = df.iloc[:, columns].astype(target_type)
@@ -63,13 +63,13 @@ class DatasetReader(object):
         self._io_factory = io_factory
 
     def csv(self, *args, **kwargs):
-        return _read_csv(self._io_factory._url, *args, **kwargs)    # TODO - assumption about _url here!
+        return _read_csv(self._io_factory.url(), *args, **kwargs)    # TODO - assumption about url() here!
 
     def parquet(self):
         return _read_parquet(self._io_factory.readable_file())
 
     def raw(self):
-        return urllib.request.urlopen(self._io_factory._url)    # TODO - assumption about _url here!
+        return urllib.request.urlopen(self._io_factory.url())    # TODO - assumption about url() here!
 
     def json(self):
         # TODO: switch to using json.load() once decoding issues figured out
@@ -136,7 +136,7 @@ class DownloadFile:
         self.close()
 
 class UploadFile:
-    def __init__(self, url, method, mode='w+b'):
+    def __init__(self, url, method, mode="w+b"):
         self._url = url
         self._tmp = tempfile.SpooledTemporaryFile(max_size=10 * 1024 * 1024, mode=mode)
         self._method = method
@@ -186,3 +186,6 @@ class RemoteIoFactory:
 
     def readable_file(self, mode="r+b"):
         return DownloadFile(self._url)
+
+    def url(self):
+        return self._url

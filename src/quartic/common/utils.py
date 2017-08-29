@@ -26,7 +26,7 @@ def get_files(dirs_and_files):
         sys.exit(1)
 
 def get_module_specs(files):
-    module_specs = [importlib.util.spec_from_file_location(f.strip('.py'), os.path.abspath(f)) for f in files]
+    module_specs = [importlib.util.spec_from_file_location(f.strip(".py"), os.path.abspath(f)) for f in files]
     module_specs = [module for module in module_specs if isinstance(module, importlib.machinery.ModuleSpec)]
     assert module_specs
     return module_specs

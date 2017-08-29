@@ -19,7 +19,6 @@ class TestDatasetWriter:
 
         with DatasetWriter(io_factory, on_close, extensions) as f:
             f.extensions()["foo"] = "bar"
-            pass
 
         assert on_close.mock_calls == [call({"foo": "bar"})]
 

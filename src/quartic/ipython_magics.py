@@ -19,7 +19,7 @@ except ImportError:
 
 def load_ipython_extension(shell):
     shell.register_magics(QuarticMagics)
-    shell.push('MetaData')
+    shell.push("MetaData")
 
 def unload_ipython_extension(shell):
     pass
