@@ -18,11 +18,14 @@ class ThrowingArgumentParser(argparse.ArgumentParser):
 def parse_args(argv):
     parser = ThrowingArgumentParser(description="Evaluate Quartic Python pipelines")
     parser.add_argument("--execute", metavar="STEP_ID", type=str, help="step id to execute")
-    parser.add_argument("--evaluate", metavar="OUPUT_FILE", type=str, help="path of file in which to output steps json")
+    parser.add_argument("--evaluate", metavar="OUPUT_FILE", type=str,
+                        help="path of file in which to output steps json")
     parser.add_argument("--exception", metavar="EXCEPTION_FILE", default="exception.json",
                         type=str, help="path of file in which to output error information")
-    parser.add_argument("--namespace", metavar="NAMESPACE", type=str, help="path of file in which to output error information")
-    parser.add_argument("pipelines", metavar="PIPELINES", type=str, nargs="+", help="one or more paths to python packages containing pipeline code")
+    parser.add_argument("--namespace", metavar="NAMESPACE", type=str,
+                        help="path of file in which to output error information")
+    parser.add_argument("pipelines", metavar="PIPELINES", type=str, nargs="+",
+                        help="one or more paths to python packages containing pipeline code")
 
     args = parser.parse_args(argv)
     if not (args.execute or args.evaluate) or (args.execute and args.evaluate):

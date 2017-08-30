@@ -21,7 +21,7 @@ def load_package(package_dir):
     m = load_module(mspec)
     yield m
 
-    # This is a bit of a kludge to make sure the submodules can find the root package 
+    # This is a bit of a kludge to make sure the submodules can find the root package
     # under a sensible name. e.g. if you have the following:
     # pipelines/
     #   bar/
