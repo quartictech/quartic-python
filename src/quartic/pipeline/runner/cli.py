@@ -30,7 +30,7 @@ def parse_args(argv):
     args = parser.parse_args(argv)
     if not (args.execute or args.evaluate) or (args.execute and args.evaluate):
         raise ArgumentParserException(parser, "Must specify either --execute or --evaluate")
-    if (args.execute and not args.namespace):
+    if args.execute and not args.namespace:
         raise ArgumentParserException(parser, "Must specify --namespace with --execute")
 
     return args
