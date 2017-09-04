@@ -12,7 +12,13 @@ from .cli import main, parse_args
 
 def write_exception(fname, etype, exception):
     output = {"type": etype}
-    output.update({k:v for k, v in exception.__dict__.items() if not k.startswith("_")})
+    for k, v in exception.__dict__.items():
+        if not k.startswith("_"):
+            try:
+                json.dumps(v)
+                output[k] = v
+            except TypeError:
+                output[k] = str(v)
     json.dump(output, open(fname, "w"), indent=1)
 
 if __name__ == "__main__":

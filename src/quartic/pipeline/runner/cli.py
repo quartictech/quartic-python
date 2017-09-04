@@ -30,9 +30,12 @@ def parse_args(argv):
     args = parser.parse_args(argv)
     if not (args.execute or args.evaluate) or (args.execute and args.evaluate):
         raise ArgumentParserException(parser, "Must specify either --execute or --evaluate")
+    if (args.execute and not args.namespace):
+        raise ArgumentParserException(parser, "Must specify --namespace with --execute")
+
     return args
 
-def run_user_code(f, exception_file):
+def run_user_code(f):
     try:
         return f()
     except ModuleNotFoundError as e:
@@ -43,7 +46,7 @@ def run_user_code(f, exception_file):
 
 def main(args):
     if args.execute:
-        steps = run_user_code(lambda: utils.get_pipeline_from_args(args.pipelines), args.exception)
+        steps = run_user_code(lambda: utils.get_pipeline_from_args(args.pipelines))
         execute_steps = [step for step in steps if step.get_id() == args.execute]
         quartic = Quartic("http://{service}.platform:{port}/api/")
         if len(execute_steps) > 1:
@@ -51,9 +54,9 @@ def main(args):
         elif not execute_steps:
             raise NoMatchingStepsException(args.execute)
         else:
-            execute_steps[0].execute(quartic, args.namespace)
+            run_user_code(lambda: execute_steps[0].execute(quartic, args.namespace))
 
     elif args.evaluate:
-        steps = run_user_code(lambda: utils.get_pipeline_from_args(args.pipelines), args.exception)
+        steps = run_user_code(lambda: utils.get_pipeline_from_args(args.pipelines))
         steps = [step.to_dict() for step in steps]
         json.dump(steps, open(args.evaluate, "w"), indent=1)
