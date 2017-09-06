@@ -38,8 +38,9 @@ class Step:
         self._output = Dataset(ret)
 
     def get_id(self):
-        datasets = list(self.inputs()) + list(self.outputs())
-        return str(zlib.adler32("\n".join([str(d) for d in datasets]).encode()))
+        in_datasets = sorted([str(ds) for ds in self.inputs()])
+        out_datasets = [str(ds) for ds in self.outputs()]
+        return str(zlib.adler32("\n".join(in_datasets + out_datasets).encode()))
 
     def get_file(self):
         return self._file
