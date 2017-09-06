@@ -60,3 +60,4 @@ def main(args):
         steps = run_user_code(lambda: utils.get_pipeline_from_args(args.pipelines))
         steps = [step.to_dict() for step in steps]
         json.dump(steps, open(args.evaluate, "w"), indent=1)
+        

@@ -88,3 +88,4 @@ class Step:
             "inputs": list([i.to_json() for i in self.inputs()]),
             "outputs": list([o.to_json() for o in self.outputs()])
         }
+        
