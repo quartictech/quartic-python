@@ -52,7 +52,7 @@ def main(args):
         if len(execute_steps) > 1:
             raise MultipleMatchingStepsException(args.execute, [step.to_dict() for step in execute_steps])
         elif not execute_steps:
-            raise NoMatchingStepsException(args.execute)
+            raise NoMatchingStepsException(args.execute, [step.get_id() for step in steps])
         else:
             run_user_code(lambda: execute_steps[0].execute(quartic, args.namespace))
 
