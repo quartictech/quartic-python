@@ -16,9 +16,10 @@ class MultipleMatchingStepsException(RunnerException):
         self.steps = steps
 
 class NoMatchingStepsException(RunnerException):
-    def __init__(self, step_id):
+    def __init__(self, step_id, steps):
         super(NoMatchingStepsException, self).__init__("No matching steps")
         self.step_id = step_id
+        self.steps = steps
 
 class UserCodeExecutionException(RunnerException):
     def __init__(self, exception, tb):
@@ -42,3 +43,4 @@ class ModuleNotFoundException(RunnerException):
 
 class QuarticException(Exception):
     pass
+    
