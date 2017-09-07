@@ -1,8 +1,6 @@
 import re
 import tempfile
 import warnings
-import urllib.parse
-import urllib.request
 import json
 import requests
 
@@ -69,11 +67,11 @@ class DatasetReader(object):
         return _read_parquet(self._io_factory.readable_file())
 
     def raw(self):
-        return urllib.request.urlopen(self._io_factory.url())    # TODO - assumption about url() here!
+        return requests.get(self._io_factory.url())    # TODO - assumption about url() here!
 
     def json(self):
         # TODO: switch to using json.load() once decoding issues figured out
-        return json.loads(self.raw().read().decode())
+        return self.raw().json()
 
 class DatasetWriter(object):
     def __init__(self, io_factory, on_close, catalogue_extensions):
