@@ -5,6 +5,28 @@ import pkgutil
 from quartic.common.step import Step
 from quartic.common.exceptions import QuarticException
 
+def get_python_files(dirs_and_files):
+    files = []
+    for a in dirs_and_files:
+        if os.path.isdir(a):
+            files += find_python_files(a)
+        if a.endswith(".py"):
+            files.append(a)
+    if files:
+        return files
+    else:
+        print("No files found for current config. Bailing.") #TODO - log this scenario
+        sys.exit(1)
+
+def find_python_files(d):
+    files = []
+    for f in os.listdir(d):
+        if f.endswith(".py"):
+            files.append(os.path.join(d, f))
+        else:
+            continue
+    return files
+
 def load_module(mspec):
     m = importlib.util.module_from_spec(mspec)
     mspec.loader.exec_module(m)

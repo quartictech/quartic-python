@@ -1,6 +1,8 @@
 import os
 import yaml
 
+pipeline_directory = "pipeline_directory"
+
 default_config = dict(
     version="0.1",
     pipeline_directory="pipelines"

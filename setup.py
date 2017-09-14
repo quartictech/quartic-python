@@ -20,7 +20,8 @@ setup(name="quartic-python",
       install_requires=[
           "click==6.7",
           "networkx==1.11",
-          "pyaml==17.8.0",
+          "gitpython==2.1.5",
+          "pyaml==17.8.0"
       ],
       extras_require={
           "graphviz":["pygraphviz==1.3.1"],

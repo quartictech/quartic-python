@@ -28,7 +28,7 @@ def build_dag(steps, default_namespace="default"):
 def get_graph(steps=None):
     cfg = yaml_utils.config()
     if not steps:
-        pipeline_dir = yaml_utils.attr_paths_from_config(cfg["pipeline_directory"])
+        pipeline_dir = yaml_utils.attr_paths_from_config(cfg[yaml_utils.pipeline_directory])
         steps = get_pipeline_from_args(pipeline_dir)
     return build_dag(steps, "local-testing")
 
@@ -38,7 +38,7 @@ def is_valid_dag(dag):
 def valid_steps(steps=None):
     cfg = yaml_utils.config()
     if not steps:
-        pipeline_dir = yaml_utils.attr_paths_from_config(cfg["pipeline_directory"])
+        pipeline_dir = yaml_utils.attr_paths_from_config(cfg[yaml_utils.pipeline_directory])
         steps = get_pipeline_from_args(pipeline_dir)
     # build the DAG and check it
     dag = build_dag(steps, "local-testing")
