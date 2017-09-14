@@ -9,7 +9,7 @@ test_deps = [
 ]
 
 setup(name="quartic-python",
-      version=os.environ.get("CIRCLE_BUILD_NUM", "unknown"),
+      version=os.environ.get("CIRCLE_BUILD_NUM", "0"),
       description="Quartic platform bindings",
       author="Quartic Technologies",
       author_email="contact@quartic.io",
