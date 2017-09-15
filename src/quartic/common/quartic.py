@@ -186,7 +186,7 @@ class Dataset:
                 "type": "cloud",
                 "path": self._howl.path(self._namespace, partial_path),
                 "streaming": streaming,
-                "mimeType": mime_type
+                "mime_type": mime_type
             }
         }
 

@@ -50,7 +50,7 @@ class TestRegistration:
                 "type": "cloud",
                 "path": "/some-path",
                 "streaming": False,
-                "mimeType": "application/octet-stream"
+                "mime_type": "application/octet-stream"
             }
         }, False)]
 
@@ -143,7 +143,7 @@ class TestWriter:
                 "type": "cloud",
                 "path": "/some-path",
                 "streaming": False,
-                "mimeType": "application/octet-stream"
+                "mime_type": "application/octet-stream"
             }
         }, False)]
 
