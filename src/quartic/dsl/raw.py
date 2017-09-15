@@ -10,6 +10,7 @@ class RawExecutor(Executor):
 
     def to_dict(self):
         return {
+            "type": "raw",
             "source": self._raw_dataset_spec.to_dict()
         }
 

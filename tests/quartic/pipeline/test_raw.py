@@ -11,3 +11,7 @@ class TestRaw:
                 return FromBucket("/some/data")
 
             assert isinstance(my_dataset, Node)
+            d = my_dataset.to_dict()
+
+            assert d["type"] == "raw"
+            assert d["source"] == {"type": "bucket", "key": "/some/data"}

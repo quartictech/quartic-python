@@ -15,3 +15,6 @@ class StepExecutor(Executor):
 
         output_writer = func(**kwargs)
         output_writer.apply(context.resolve(output))
+
+    def to_dict(self):
+        return {"type": "step"}

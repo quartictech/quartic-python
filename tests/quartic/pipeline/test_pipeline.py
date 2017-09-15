@@ -7,7 +7,6 @@ from quartic import step
 from quartic.dsl.node import Node
 from quartic.common.dataset import Dataset, writer
 from quartic.pipeline.runner.cli import main, parse_args
-from quartic.dsl.step import StepExecutor
 from quartic.dsl.context import DslContext
 
 resources_dir = "tests/resources"
@@ -195,7 +194,7 @@ class TestStep:
                 pass
 
         assert isinstance(func, Node)
-        assert isinstance(func._executor, StepExecutor) #pylint: disable=protected-access
+        assert func.to_dict()["type"] == "step"
 
 
     def test_complains_if_unannotated_arguments(self):
