@@ -2,7 +2,7 @@ import os
 import sys
 import importlib
 import pkgutil
-from quartic.common.step import Step
+from quartic.dsl.context import DslContext
 from quartic.common.exceptions import QuarticException
 
 def get_python_files(dirs_and_files):
@@ -74,9 +74,6 @@ def load_modules(package_dirs):
             yield m
 
 def get_pipeline_from_args(dirs):
-    steps = []
-    for module in load_modules(dirs):
-        for _, v in module.__dict__.items():
-            if isinstance(v, Step):
-                steps.append(v)
-    return steps
+    with DslContext() as context:
+        list(load_modules(dirs))
+        return context.nodes()

@@ -3,9 +3,12 @@ import os.path
 import pytest
 from mock import Mock, MagicMock
 from quartic.common.exceptions import QuarticException, UserCodeExecutionException
-from quartic.common.step import step, Step
+from quartic import step
+from quartic.dsl.node import Node
 from quartic.common.dataset import Dataset, writer
 from quartic.pipeline.runner.cli import main, parse_args
+from quartic.dsl.step import StepExecutor
+from quartic.dsl.context import DslContext
 
 resources_dir = "tests/resources"
 
@@ -17,16 +20,20 @@ class TestCli:
         steps = json.load(open(output_path))
         assert len(steps) == 2
 
-        steps.sort(key=lambda x: x["name"])
-        assert steps[0]["name"] == "step1"
-        assert steps[0]["description"] == "First step"
-        assert steps[0]["file"] == os.path.join(resources_dir, "good_dag", "good_dag.py")
-        assert steps[0]["line_range"] == [11, 14]
+        steps.sort(key=lambda x: x["info"]["name"])
+        assert steps[0]["info"] == {
+            "name": "step1",
+            "description": "First step",
+            "file": os.path.join(resources_dir, "good_dag", "good_dag.py"),
+            "line_range": [11, 14]
+        }
 
-        assert steps[1]["name"] == "step2"
-        assert steps[1]["description"] == "Second step"
-        assert steps[1]["file"] == os.path.join(resources_dir, "good_dag", "good_dag.py")
-        assert steps[1]["line_range"] == [16, 19]
+        assert steps[1]["info"] == {
+            "name": "step2",
+            "description": "Second step",
+            "file": os.path.join(resources_dir, "good_dag", "good_dag.py"),
+            "line_range": [16, 19]
+        }
 
 
     def test_evaluate_bad_dag(self, tmpdir):
@@ -49,16 +56,19 @@ class TestCli:
         steps = json.load(open(output_path))
         assert len(steps) == 2
 
-        steps.sort(key=lambda x: x["name"])
-        assert steps[0]["name"] == "step1"
-        assert steps[0]["description"] == "A description"
-        assert steps[0]["file"] == os.path.join(resources_dir, "disjoint_dag", "disjoint_dag.py")
-        assert steps[0]["line_range"] == [11, 14]
-
-        assert steps[1]["name"] == "step2"
-        assert steps[1]["description"] == "Another description"
-        assert steps[1]["file"] == os.path.join(resources_dir, "disjoint_dag", "disjoint_dag.py")
-        assert steps[1]["line_range"] == [16, 19]
+        steps.sort(key=lambda x: x["info"]["name"])
+        assert steps[0]["info"] == {
+            "name": "step1",
+            "description": "A description",
+            "file": os.path.join(resources_dir, "disjoint_dag", "disjoint_dag.py"),
+            "line_range": [11, 14]
+        }
+        assert steps[1]["info"] == {
+            "name": "step2",
+            "description": "Another description",
+            "file": os.path.join(resources_dir, "disjoint_dag", "disjoint_dag.py"),
+            "line_range": [16, 19]
+        }
 
 
     def test_execute_step(self, tmpdir):
@@ -174,15 +184,18 @@ class TestStep:
             self.x = x
             self.y = y
             return self.writer
-        self.valid_step = step(func)
+        with DslContext():
+            self.valid_step = step(func)
 
 
-    def test_decorator_applies_step_wrapper(self):
-        @step
-        def func() -> "alice/bob":
-            pass
+    def test_decorator_applies_node_wrapper(self):
+        with DslContext():
+            @step
+            def func() -> "alice/bob":
+                pass
 
-        assert isinstance(func, Step)
+        assert isinstance(func, Node)
+        assert isinstance(func._executor, StepExecutor) #pylint: disable=protected-access
 
 
     def test_complains_if_unannotated_arguments(self):

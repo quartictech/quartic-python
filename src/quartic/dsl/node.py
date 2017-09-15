@@ -3,21 +3,40 @@ import itertools
 import zlib
 import os.path
 import pprint
-from .exceptions import QuarticException
-from .dataset import Dataset
+from quartic.common.exceptions import QuarticException
+from quartic.common.dataset import Dataset
 
-def step(f):
-    return Step(f)
+class ExecutionContext:
+    def __init__(self, quartic, namespace):
+        self.quartic = quartic
+        self.namespace = namespace
 
-class Step:
-    def __init__(self, func, *args, **kwargs):
+    def resolve(self, dataset):
+        return dataset.with_namespace(self.namespace).resolve(self.quartic)
+
+class Executor:
+    def execute(self, context, inputs, output, func):
+        pass
+
+    def to_dict(self):
+        return {}
+
+class LexicalInfo:
+    def __init__(self, file, line_range):
+        self.file = file
+        self.line_range = line_range
+
+class Node:
+    def __init__(self, func, executor, *args, **kwargs):
         self.name = func.__name__
         self.description = func.__doc__
         self._func = func
-        self._file = os.path.relpath(inspect.getsourcefile(func))
+        self._executor = executor
         source_lines = inspect.getsourcelines(func)
         end_line = source_lines[1] + len(source_lines[0]) - 1
-        self._line_range = (source_lines[1], end_line)
+        self._lexical_info = LexicalInfo(
+            os.path.relpath(inspect.getsourcefile(func)),
+            (source_lines[1], end_line))
         self._inputs = {}
         sig = inspect.signature(func)
 
@@ -43,7 +62,7 @@ class Step:
         return str(zlib.adler32("\n".join(in_datasets + out_datasets).encode()))
 
     def get_file(self):
-        return self._file
+        return self._lexical_info.file
 
     def get_name(self):
         return self.name
@@ -63,29 +82,23 @@ class Step:
         return itertools.chain(self.inputs(), self.outputs())
 
     def execute(self, quartic, namespace):
-        resolve = lambda d: d.with_namespace(namespace).resolve(quartic)
-
-        kwargs = {}
-        for k, v in self._inputs.items():
-            if isinstance(v, dict):
-                kwargs[k] = {k2: resolve(v2) for k2, v2 in v.items()}
-            else:
-                kwargs[k] = resolve(v)
-
-        output_writer = self._func(**kwargs)
-        output_writer.apply(resolve(self._output))
+        self._executor.execute(ExecutionContext(quartic, namespace),
+                               self._inputs, self._output, self._func)
 
     def __repr__(self):
         return pprint.pformat(self.to_dict())
 
     def to_dict(self):
-        return {
+        out = {
             "id": self.get_id(),
-            "name": self.name,
-            "description": self.description,
-            "file": self._file,
-            "line_range": self._line_range,
+            "info": {
+                "name": self.name,
+                "description": self.description,
+                "file": self._lexical_info.file,
+                "line_range": self._lexical_info.line_range
+            },
             "inputs": list([i.to_json() for i in self.inputs()]),
             "outputs": list([o.to_json() for o in self.outputs()])
         }
-        
+        out.update(self._executor.to_dict())
+        return out
