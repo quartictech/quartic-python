@@ -98,7 +98,7 @@ class Node:
                 "line_range": self._lexical_info.line_range
             },
             "inputs": list([i.to_json() for i in self.inputs()]),
-            "outputs": list([o.to_json() for o in self.outputs()])
+            "output": self._output.to_json()
         }
         out.update(self._executor.to_dict())
         return out

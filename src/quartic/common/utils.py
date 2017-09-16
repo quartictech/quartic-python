@@ -28,9 +28,8 @@ def find_python_files(d):
     return files
 
 def load_module(mspec):
-    m = importlib.util.module_from_spec(mspec)
-    mspec.loader.exec_module(m)
-    return m
+    module = mspec.loader.load_module(mspec.name)
+    return module
 
 # TODO: Figure out a way to do this more nicely
 def load_package(package_dir):

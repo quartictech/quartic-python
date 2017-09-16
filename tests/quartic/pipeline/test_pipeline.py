@@ -16,18 +16,18 @@ class TestCli:
         output_path = os.path.join(tmpdir, "steps.json")
         args = parse_args(["--evaluate", output_path, os.path.join(resources_dir, "good_dag")])
         main(args)
-        steps = json.load(open(output_path))
-        assert len(steps) == 2
+        nodes = json.load(open(output_path))["nodes"]
+        assert len(nodes) == 2
 
-        steps.sort(key=lambda x: x["info"]["name"])
-        assert steps[0]["info"] == {
+        nodes.sort(key=lambda x: x["info"]["name"])
+        assert nodes[0]["info"] == {
             "name": "step1",
             "description": "First step",
             "file": os.path.join(resources_dir, "good_dag", "good_dag.py"),
             "line_range": [11, 14]
         }
 
-        assert steps[1]["info"] == {
+        assert nodes[1]["info"] == {
             "name": "step2",
             "description": "Second step",
             "file": os.path.join(resources_dir, "good_dag", "good_dag.py"),
@@ -52,17 +52,17 @@ class TestCli:
         output_path = os.path.join(tmpdir, "steps.json")
         args = parse_args(["--evaluate", output_path, os.path.join(resources_dir, "disjoint_dag")])
         main(args)
-        steps = json.load(open(output_path))
-        assert len(steps) == 2
+        nodes = json.load(open(output_path))["nodes"]
+        assert len(nodes) == 2
 
-        steps.sort(key=lambda x: x["info"]["name"])
-        assert steps[0]["info"] == {
+        nodes.sort(key=lambda x: x["info"]["name"])
+        assert nodes[0]["info"] == {
             "name": "step1",
             "description": "A description",
             "file": os.path.join(resources_dir, "disjoint_dag", "disjoint_dag.py"),
             "line_range": [11, 14]
         }
-        assert steps[1]["info"] == {
+        assert nodes[1]["info"] == {
             "name": "step2",
             "description": "Another description",
             "file": os.path.join(resources_dir, "disjoint_dag", "disjoint_dag.py"),
@@ -75,8 +75,8 @@ class TestCli:
         args = parse_args(["--evaluate", output_path, os.path.join(resources_dir, "good_dag")])
         main(args)
 
-        steps = json.load(open(output_path))
-        args = parse_args(["--execute", steps[0]["id"], "--namespace", "test",
+        nodes = json.load(open(output_path))["nodes"]
+        args = parse_args(["--execute", nodes[0]["id"], "--namespace", "test",
                            os.path.join(resources_dir, "good_dag")])
         main(args)
 

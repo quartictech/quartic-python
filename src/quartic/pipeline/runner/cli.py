@@ -57,7 +57,7 @@ def main(args):
             run_user_code(lambda: execute_steps[0].execute(quartic, args.namespace))
 
     elif args.evaluate:
-        steps = run_user_code(lambda: utils.get_pipeline_from_args(args.pipelines))
-        steps = [step.to_dict() for step in steps]
-        json.dump(steps, open(args.evaluate, "w"), indent=1)
+        nodes = run_user_code(lambda: utils.get_pipeline_from_args(args.pipelines))
+        output = {"nodes": [node.to_dict() for node in nodes]}
+        json.dump(output, open(args.evaluate, "w"), indent=1)
         
