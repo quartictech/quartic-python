@@ -2,10 +2,12 @@ import os
 from setuptools import setup, find_packages
 
 test_deps = [
-          "mock==2.0.0",
-          "pytest==3.0.7",
-          "pylint==1.7.1",
-          "pylint-quotes==0.1.5"
+    "mock==2.0.0",
+    "pytest==3.0.7",
+    "pylint==1.7.1",
+    "pylint-quotes==0.1.5",
+    "pytest-runner==2.11.1",
+    "setuptools-lint==0.5.2"
 ]
 
 setup(name="quartic-python",
@@ -34,10 +36,6 @@ setup(name="quartic-python",
               "datadiff==2.0.0"],
           "test":test_deps,
       },
-      setup_requires=[
-          "pytest-runner==2.11.1",
-          "setuptools-lint==0.5.2"
-      ],
       tests_require=test_deps,
       entry_points={
           "console_scripts": [
