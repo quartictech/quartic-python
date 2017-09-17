@@ -38,7 +38,7 @@ def parse_args(argv):
 def run_user_code(f):
     try:
         return f()
-    except ModuleNotFoundError as e:
+    except ImportError as e:
         raise ModuleNotFoundException(e.name)
     except Exception as e:
         _, _, tb = sys.exc_info()
