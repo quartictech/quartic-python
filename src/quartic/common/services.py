@@ -61,10 +61,6 @@ class Howl(Service):
         """Check the exists of the specified file at preformed path."""
         return self._head(locator_path)
 
-    def download_path(self, locator_path):
-        """Download file from a preformed path e.g. /<namespace>/<path>."""
-        return self._get(locator_path)
-
     def download(self, namespace, path):
         """Download file."""
         return self._get(self.path(namespace, path))
@@ -79,7 +75,7 @@ class Howl(Service):
     def path(self, namespace, path):
         if path is None:
             return namespace
-        return "/{}/{}".format(namespace, self._quote(path))
+        return "/{}/managed/{}/{}".format(namespace, namespace, self._quote(path))
 
     def url(self, namespace, path):
         return self._url(self.path(namespace, path))
