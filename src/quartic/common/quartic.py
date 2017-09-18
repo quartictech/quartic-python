@@ -1,4 +1,5 @@
 # pylint: disable=too-many-arguments
+import urllib
 import requests
 
 from quartic.common.dataset import raise_if_invalid_coord
@@ -25,6 +26,9 @@ class Quartic:
         except: # pylint: disable=bare-except
             return None
 
+    def get_unmanaged(self, namespace, path):
+        url = self._howl.unamanged_url(namespace, path)
+        return urllib.request.urlopen(url)
 
 class Namespace:
     def __init__(self, catalogue, howl, namespace, notebook_name):
@@ -112,8 +116,6 @@ class Dataset:
 
     def writer(self, name=None, description=None, mime_type="application/octet-stream",
                attribution="quartic", extensions=None, streaming=False):
-        self._assert_non_raw_dataset_id()
-
         dataset = self._get_dataset()
         if dataset:
             return self._writer_for_existing_dataset(name, description, dataset)
@@ -165,13 +167,6 @@ class Dataset:
     def _assert_raw_dataset_id(self):
         if not self._dataset_id or not self._dataset_id.startswith("raw/"):
             raise QuarticException("Dataset ID must begin with raw/")
-
-    def _assert_non_raw_dataset_id(self):
-        if self._dataset_id:
-            if self._dataset_id.startswith("raw/"):
-                raise QuarticException("Dataset ID must not begin with raw/")
-            if self._dataset_id == "raw":
-                raise QuarticException("Dataset ID must not be raw")
 
     def _dataset_config(self, name, description, attribution, extensions, partial_path,
                         streaming, mime_type):

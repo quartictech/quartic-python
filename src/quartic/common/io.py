@@ -3,7 +3,12 @@ import tempfile
 import warnings
 import urllib.request
 import json
+import shutil
+import logging
 import requests
+
+logging.basicConfig(level=logging.INFO)
+log = logging.getLogger(__name__)
 
 # Adapted from:
 # http://stackoverflow.com/questions/28682562/pandas-read-csv-converting-mixed-types-columns-as-string
@@ -27,10 +32,10 @@ def _read_csv(*args, coerce_mixed_types=True, target_type=str, **kwargs):
                     df.iloc[:, columns] = df.iloc[:, columns].astype(target_type)
         return df
 
-def _raise_if_any_all_nan_columns(df):
+def _warn_if_any_all_nan_columns(df):
     nan_columns = df.columns.drop(df.dropna(how="all", axis=1).columns).values
-    if nan_columns:
-        raise ValueError("Cannot write columns with all-NaN values: {}".format(nan_columns))
+    if nan_columns.any():
+        log.warning("Columns with all-NaN values: %s", nan_columns)
 
 def _raise_if_any_mixed_type_columns(df):
     bad_columns = [c for c in df.columns if len(set([type(x) for x in df[c].unique() if x is not None])) > 1]
@@ -43,7 +48,7 @@ def _write_parquet(df, f):
     import pyarrow as pa
 
     # Because pyarrow can't handle these (with a cryptic error)
-    _raise_if_any_all_nan_columns(df)
+    _warn_if_any_all_nan_columns(df)
     _raise_if_any_mixed_type_columns(df)
 
     # we have to coerce timestamps to millisecond resolution as
@@ -57,7 +62,7 @@ def _read_parquet(f):
         tbl = pq.read_table(f)
         return tbl.to_pandas()
 
-class DatasetReader(object):
+class DatasetReader:
     def __init__(self, io_factory):
         self._io_factory = io_factory
 
@@ -77,7 +82,7 @@ class DatasetReader(object):
         # TODO: switch to using json.load() once decoding issues figured out
         return json.loads(self.raw().read().decode())
 
-class DatasetWriter(object):
+class DatasetWriter:
     def __init__(self, io_factory, on_close, catalogue_extensions):
         self._io_factory = io_factory
         self._on_close = on_close
@@ -109,6 +114,9 @@ class DatasetWriter(object):
         self._file.cancel()
         self._file = self._io_factory.writable_file(mode="w+")
         json.dump(o, self._file)
+
+    def raw(self, f):
+        shutil.copyfileobj(f, self._file)
 
     def csv(self, df, *args, **kwargs):
         self._file.cancel()

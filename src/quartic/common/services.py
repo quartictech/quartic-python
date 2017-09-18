@@ -77,6 +77,12 @@ class Howl(Service):
             return namespace
         return "/{}/managed/{}/{}".format(namespace, namespace, self._quote(path))
 
+    def unmanaged_path(self, namespace, path):
+        return "/{}/unmanaged/{}".format(namespace, self._quote(path))
+
+    def unamanged_url(self, namespace, path):
+        return self._url(self.unmanaged_path(namespace, path))
+
     def url(self, namespace, path):
         return self._url(self.path(namespace, path))
 

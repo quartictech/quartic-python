@@ -158,23 +158,6 @@ class TestWriter:
         assert self.catalogue.put.mock_calls[0][1][2]["metadata"]["description"] == "foo"
 
 
-    def test_enforces_id_doesnt_start_with_raw(self):
-        dataset = Dataset(self.catalogue, self.howl, "yeah", "raw/blah",
-                          io_factory_class=self.io_factory_class)
-        with pytest.raises(QuarticException):
-            dataset.writer("foo", "bar")
-
-        dataset = Dataset(self.catalogue, self.howl, "yeah", "raw",
-                          io_factory_class=self.io_factory_class)
-        with pytest.raises(QuarticException):
-            dataset.writer("foo", "bar")
-
-        # This is ok
-        dataset = Dataset(self.catalogue, self.howl, "yeah", "rawstuff",
-                          io_factory_class=self.io_factory_class)
-        dataset.writer("foo", "bar")
-
-
 def mock_catalogue():
     mock = Mock()
     mock.get.return_value = None

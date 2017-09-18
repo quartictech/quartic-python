@@ -40,23 +40,6 @@ class TestDatasetWriter:
         pd.util.testing.assert_frame_equal(df, df_written)
 
 
-    def test_parquet_reports_columns_with_all_none(self, tmpdir):
-        path = tmpdir.join("output.pq")
-        io_factory = LocalIoFactory(path)
-
-        df = pd.DataFrame({
-            "foo": [0, None, 2],
-            "bar": [None, None, None]
-        })
-
-        with pytest.raises(ValueError) as excinfo:
-            with DatasetWriter(io_factory, lambda x: None, None) as f:
-                f.parquet(df)
-
-        assert "bar" in str(excinfo.value)
-        assert "foo" not in str(excinfo.value)
-
-
     def test_parquet_with_mixed_type_columns(self, tmpdir):
         path = tmpdir.join("output.pq")
         io_factory = LocalIoFactory(path)
