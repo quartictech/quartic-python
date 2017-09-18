@@ -14,6 +14,8 @@ class RawExecutor(Executor):
 
     def execute(self, context, inputs, output, func):
         raw_path = self._raw_dataset_spec.path
+        raw_name = self._raw_dataset_spec.name
+        raw_desc = self._raw_dataset_spec.desc
         log.info("Fetching dataset: %s", raw_path)
         response = context.quartic.get_unmanaged(context.namespace, raw_path)
         temp = tempfile.TemporaryFile()
@@ -21,7 +23,7 @@ class RawExecutor(Executor):
         temp.seek(0)
         dataset = context.resolve(output)
         log.info("Writing dataset to storage: %s", raw_path)
-        with dataset.writer(self._raw_dataset_spec.path) as writer:
+        with dataset.writer(raw_name, raw_desc) as writer:
             writer.raw(temp)
 
     def to_dict(self):
@@ -31,8 +33,10 @@ class RawExecutor(Executor):
         }
 
 class FromBucket:
-    def __init__(self, path):
+    def __init__(self, path, name=None, desc=None):
         self.path = path
+        self.name = name
+        self.desc = desc
 
     def to_dict(self):
         return {
