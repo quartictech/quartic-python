@@ -186,6 +186,9 @@ class LocalIoFactory:
     def readable_file(self, mode="r+b"):
         return open(self._path, mode)
 
+    def url(self):
+        return "file://{}".format(self._path)
+
 class RemoteIoFactory:
     def __init__(self, url, method):
         self._url = url
