@@ -1,12 +1,10 @@
 import shutil
 import tempfile
-import logging
 
 from .context import DslContext
 from .node import Node, Executor
-
-logging.basicConfig(level=logging.INFO)
-log = logging.getLogger(__name__)
+from ..common.log import logger
+log = logger(__name__)
 
 class RawExecutor(Executor):
     def __init__(self, raw_dataset_spec):

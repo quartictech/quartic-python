@@ -4,11 +4,10 @@ import warnings
 import urllib.request
 import json
 import shutil
-import logging
 import requests
 
-logging.basicConfig(level=logging.INFO)
-log = logging.getLogger(__name__)
+from .log import logger
+log = logger(__name__)
 
 # Adapted from:
 # http://stackoverflow.com/questions/28682562/pandas-read-csv-converting-mixed-types-columns-as-string
