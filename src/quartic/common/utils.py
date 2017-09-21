@@ -6,7 +6,7 @@ import requests
 import urllib
 from quartic.dsl.context import DslContext
 from quartic.common.exceptions import QuarticException
-from . import __version__
+from quartic import __version__
 
 USER_AGENT = "quartic-python/{}".format(__version__)
 
