@@ -2,8 +2,23 @@ import os
 import sys
 import importlib
 import pkgutil
+import requests
+import urllib
 from quartic.dsl.context import DslContext
 from quartic.common.exceptions import QuarticException
+from . import __version__
+
+USER_AGENT = "quartic-python/{}".format(__version__)
+
+def get_session():
+    session = requests.Session()
+    session.headers["User-Agent"] = USER_AGENT
+    return session
+
+def get_opener():
+    opener = urllib.request.build_opener()
+    opener.addheaders = [('User-Agent', USER_AGENT)]
+    return opener
 
 def get_python_files(dirs_and_files):
     files = []

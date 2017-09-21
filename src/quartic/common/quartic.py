@@ -1,5 +1,4 @@
 # pylint: disable=too-many-arguments
-import urllib
 import requests
 
 from quartic.common.dataset import raise_if_invalid_coord

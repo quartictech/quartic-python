@@ -1,14 +1,14 @@
 import urllib.parse
-import requests
 from datadiff import diff
 from .exceptions import QuarticException
-
+from .utils import get_session, get_opener
 
 class Service:
     """Abstract class for wrapping a service API."""
     def __init__(self, api_root):
         self._api_root = api_root
-        self._session = requests.Session()
+        self._session = get_session()
+        self._opener = get_opener()
 
     def _head(self, resource, **kwargs):
         return self._check(self._session.head(self._url(resource), **kwargs))
