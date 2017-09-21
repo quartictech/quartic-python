@@ -26,15 +26,7 @@ class Quartic:
             return None
 
     def get_unmanaged(self, namespace, path):
-        url = self._howl.unamanged_url(namespace, path)
-        try:
-            return urllib.request.urlopen(url)
-        except urllib.error.HTTPError as e:
-            if e.code == 404:
-                raise QuarticException("Unmanaged dataset not found: {} (namespace = {})".format(path, namespace))
-            raise
-
-
+        return self._howl.unmanaged_open(namespace, path)
 
 class Namespace:
     def __init__(self, catalogue, howl, namespace, notebook_name):

@@ -11,15 +11,15 @@ class RawExecutor(Executor):
         raw_path = self._raw_dataset_spec.path
         raw_name = self._raw_dataset_spec.name
         raw_desc = self._raw_dataset_spec.desc
-        log.info("Fetching dataset: %s", raw_path)
-        response = context.quartic.get_unmanaged(context.namespace, raw_path)
-        temp = tempfile.TemporaryFile()
-        shutil.copyfileobj(response, temp)
-        temp.seek(0)
-        dataset = context.resolve(output)
-        log.info("Writing dataset to storage: %s", raw_path)
-        with dataset.writer(raw_name, raw_desc) as writer:
-            writer.raw(temp)
+        log.info("Fetching from bucket: %s", raw_path)
+        try:
+            in_stream = context.quartic.get_unmanaged(context.namespace, raw_path)
+            dataset = context.resolve(output)
+            log.info("Writing to dataset: %s", dataset)
+            with dataset.writer(raw_name, raw_desc) as writer:
+                writer.raw(in_stream)
+        finally:
+            in_stream.close()
 
     def to_dict(self):
         return {

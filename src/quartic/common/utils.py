@@ -17,7 +17,7 @@ def get_session():
 
 def get_opener():
     opener = urllib.request.build_opener()
-    opener.addheaders = [('User-Agent', USER_AGENT)]
+    opener.addheaders = [("User-Agent", USER_AGENT)]
     return opener
 
 def get_python_files(dirs_and_files):
