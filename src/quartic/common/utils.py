@@ -1,12 +1,15 @@
 import os
+import os.path
 import sys
 import importlib
 import pkgutil
 import requests
 import urllib
+import inspect
 from quartic.dsl.context import DslContext
 from quartic.common.exceptions import QuarticException
-from quartic import __version__
+# from quartic.co import __version__
+__version__ = "noob"
 
 USER_AGENT = "quartic-python/{}".format(__version__)
 
@@ -91,3 +94,7 @@ def get_pipeline_from_args(dirs):
     with DslContext() as context:
         list(load_modules(dirs))
         return context.nodes()
+
+def get_importing_module():
+    stack = list(filter(lambda x: x.code_context, inspect.stack()))
+    return os.path.abspath(stack[2].filename)

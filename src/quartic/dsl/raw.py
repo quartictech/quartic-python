@@ -1,6 +1,8 @@
 from .context import DslContext
 from .node import Node, Executor
 from ..common.log import logger
+from ..common.utils import get_importing_module
+
 log = logger(__name__)
 
 class RawExecutor(Executor):
@@ -41,4 +43,4 @@ class FromBucket:
 
 def raw(f):
     raw_dataset_spec = f()
-    return DslContext.register(Node(f, RawExecutor(raw_dataset_spec)))
+    return DslContext.register(get_importing_module(), Node(f, RawExecutor(raw_dataset_spec)))

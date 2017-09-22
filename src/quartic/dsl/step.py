@@ -1,8 +1,10 @@
 from .context import DslContext
 from .node import Node, Executor
+from ..common.utils import get_importing_module
 
 def step(f):
-    return DslContext.register(Node(f, StepExecutor()))
+    print("hello")
+    return DslContext.register(get_importing_module(), Node(f, StepExecutor()))
 
 class StepExecutor(Executor):
     def execute(self, context, inputs, output, func):
