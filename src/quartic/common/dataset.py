@@ -71,6 +71,10 @@ class Writer:
         self._exec = lambda f: f.json(df)
         return self
 
+    def csv(self, df):
+        self._exec = lambda f: f.csv(df)
+        return self
+
     def apply(self, dataset):
         with dataset.writer(self._name, self._description) as f:
             self._exec(f)
