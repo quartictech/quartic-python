@@ -3,7 +3,6 @@ from .node import Node, Executor
 from ..common.utils import get_importing_module
 
 def step(f):
-    print("hello")
     return DslContext.register(get_importing_module(), Node(f, StepExecutor()))
 
 class StepExecutor(Executor):

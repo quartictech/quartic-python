@@ -1,3 +1,7 @@
+from quartic.common.log import logger
+
+log = logger(__name__)
+
 class DslContext:
     _instance = None
     def __init__(self):
@@ -15,10 +19,10 @@ class DslContext:
 
     def add_object(self, module, o):
         key = module, o.get_id()
-        print(key)
         if key in self._objects:
-            print("WARN")
-        self._objects[key] = o
+            log.warn("Skipping redefined node: %s (in file %s)", o.get_id(), o.get_file())
+        else:
+            self._objects[key] = o
 
     @classmethod
     def register(cls, module, o):

@@ -1,5 +1,5 @@
-from import_dag.sub.dag import *
+from quartic import step
 
-import import_dag.sub.dag
-
-print("wat")
+@step
+def hello() -> "noob":
+    pass
