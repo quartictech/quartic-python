@@ -2,7 +2,6 @@ import sys
 import json
 from quartic.common.exceptions import (
     ArgumentParserException,
-    ModuleNotFoundException,
     MultipleMatchingStepsException,
     NoMatchingStepsException,
     UserCodeExecutionException,
@@ -31,7 +30,6 @@ if __name__ == "__main__":
     except UserCodeExecutionException as e:
         write_exception(args.exception, type(e).__name__, e)
         raise e.exception()
-    except (MultipleMatchingStepsException, NoMatchingStepsException,
-            ModuleNotFoundException) as e:
+    except (MultipleMatchingStepsException, NoMatchingStepsException) as e:
         write_exception(args.exception, type(e).__name__, e)
         sys.exit(2)

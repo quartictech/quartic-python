@@ -4,7 +4,6 @@ import json
 from quartic.common.quartic import Quartic
 from quartic.common.exceptions import (
     ArgumentParserException,
-    ModuleNotFoundException,
     MultipleMatchingStepsException,
     NoMatchingStepsException,
     UserCodeExecutionException,
@@ -38,8 +37,6 @@ def parse_args(argv):
 def run_user_code(f):
     try:
         return f()
-    except ImportError as e:
-        raise ModuleNotFoundException(e.name)
     except Exception as e:
         _, _, tb = sys.exc_info()
         raise UserCodeExecutionException(e, tb)
