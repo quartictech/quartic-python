@@ -4,8 +4,8 @@ import warnings
 import urllib.request
 import json
 import shutil
-import requests
 
+from .utils import get_session
 from .log import logger
 log = logger(__name__)
 
@@ -126,7 +126,7 @@ class DatasetWriter:
 class DownloadFile:
     def __init__(self, url):
         self._tmp = tempfile.SpooledTemporaryFile(max_size=10 * 1024 * 1024)
-        r = requests.get(url, stream=True)
+        r = get_session().get(url, stream=True)
         for chunk in r.iter_content(chunk_size=1024):
             if chunk: # filter out keep-alive new chunks
                 self._tmp.write(chunk)
@@ -161,9 +161,9 @@ class UploadFile:
         self._tmp.flush()
         self._tmp.seek(0)
         if self._method == "PUT":
-            self.response = requests.put(self._url, data=self._tmp)
+            self.response = get_session().put(self._url, data=self._tmp)
         elif self._method == "POST":
-            self.response = requests.post(self._url, data=self._tmp)
+            self.response = get_session().post(self._url, data=self._tmp)
         self.response.raise_for_status()
         self._tmp.close()
     def cancel(self):
