@@ -12,6 +12,7 @@ class RawExecutor(Executor):
         raw_name = self._raw_dataset_spec.name
         raw_desc = self._raw_dataset_spec.desc
         log.info("Fetching from bucket: %s", raw_path)
+        in_stream = None
         try:
             in_stream = context.quartic.get_unmanaged(context.namespace, raw_path)
             dataset = context.resolve(output)
@@ -19,7 +20,8 @@ class RawExecutor(Executor):
             with dataset.writer(raw_name, raw_desc) as writer:
                 writer.raw(in_stream)
         finally:
-            in_stream.close()
+            if in_stream:
+                in_stream.close()
 
     def to_dict(self):
         return {
