@@ -118,8 +118,6 @@ class DatasetWriter:
         shutil.copyfileobj(f, self._file)
 
     def csv(self, df, *args, **kwargs):
-        self._file.cancel()
-        self._file = self._io_factory.writable_file(mode="w+")
         df.to_csv(self._file, *args, **kwargs)
 
 
