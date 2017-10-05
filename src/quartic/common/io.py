@@ -162,7 +162,7 @@ class UploadFile:
         self._tmp.seek(0)
         fobj = self._tmp
         if not 'b' in fobj.mode:
-            fobj = self._tmp.file.buffer.raw
+            fobj = self._tmp.buffer.raw
         if self._method == "PUT":
             self.response = get_session().put(self._url, data=fobj)
         elif self._method == "POST":
