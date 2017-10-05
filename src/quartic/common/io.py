@@ -160,10 +160,13 @@ class UploadFile:
     def close(self):
         self._tmp.flush()
         self._tmp.seek(0)
+        fobj = self._tmp
+        if not 'b' in fobj.mode:
+            fobj = self._tmp._file.buffer.raw
         if self._method == "PUT":
-            self.response = get_session().put(self._url, data=self._tmp)
+            self.response = get_session().put(self._url, data=fobj)
         elif self._method == "POST":
-            self.response = get_session().post(self._url, data=self._tmp)
+            self.response = get_session().post(self._url, data=fobj)
         self.response.raise_for_status()
         self._tmp.close()
     def cancel(self):
