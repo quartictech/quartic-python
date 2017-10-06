@@ -8,20 +8,7 @@ class RawExecutor(Executor):
         self._raw_dataset_spec = raw_dataset_spec
 
     def execute(self, context, inputs, output, func):
-        raw_path = self._raw_dataset_spec.path
-        raw_name = self._raw_dataset_spec.name
-        raw_desc = self._raw_dataset_spec.desc
-        log.info("Fetching from bucket: %s", raw_path)
-        in_stream = None
-        try:
-            in_stream = context.quartic.get_unmanaged(context.namespace, raw_path)
-            dataset = context.resolve(output)
-            log.info("Writing to dataset: %s", dataset)
-            with dataset.writer(raw_name, raw_desc) as writer:
-                writer.raw(in_stream)
-        finally:
-            if in_stream:
-                in_stream.close()
+        raise NotImplementedError()  # Handled by platform instead, so should never be called
 
     def to_dict(self):
         return {

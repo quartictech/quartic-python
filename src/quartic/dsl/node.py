@@ -16,7 +16,7 @@ class ExecutionContext:
 
 class Executor:
     def execute(self, context, inputs, output, func):
-        pass
+        raise NotImplementedError()
 
     def to_dict(self):
         return {}
