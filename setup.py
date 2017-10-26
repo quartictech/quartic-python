@@ -3,6 +3,7 @@ from setuptools import setup, find_packages
 
 test_deps = [
     "mock==2.0.0",
+    "responses==0.8.1",
     "pytest==3.0.7",
     "pylint==1.7.1",
     "pylint-quotes==0.1.5",

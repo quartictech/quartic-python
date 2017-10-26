@@ -1,29 +1,50 @@
 import urllib.parse
 from datadiff import diff
+import requests
+from requests.auth import AuthBase
+from quartic import __version__
 from .exceptions import QuarticException
-from .utils import get_session, get_opener
+
+
+USER_AGENT = "quartic-python/{}".format(__version__)
+
+
+class BearerAuth(AuthBase):
+    def __init__(self, token):
+        self._token = token
+
+    def __call__(self, r):
+        r.headers["Authorization"] = "Bearer {}".format(self._token)
+        return r
+
+
+def get_session(bearer_token):
+    session = requests.Session()
+    session.auth = BearerAuth(bearer_token)
+    session.headers["User-Agent"] = USER_AGENT
+    return session
+
 
 class Service:
     """Abstract class for wrapping a service API."""
-    def __init__(self, api_root):
+    def __init__(self, api_root, bearer_token):
         self._api_root = api_root
-        self._session = get_session()
-        self._opener = get_opener()
+        self._session = get_session(bearer_token)
 
-    def _head(self, resource, **kwargs):
-        return self._check(self._session.head(self._url(resource), **kwargs))
+    def _head(self, resource, allow_404=False, **kwargs):
+        return self._check(self._session.head(self._url(resource), **kwargs), allow_404=allow_404)
 
-    def _get(self, resource, **kwargs):
-        return self._check(self._session.get(self._url(resource), **kwargs), allow_404=True)
+    def _get(self, resource, allow_404=False, **kwargs):
+        return self._check(self._session.get(self._url(resource), **kwargs), allow_404=allow_404)
 
-    def _post(self, resource, **kwargs):
-        return self._check(self._session.post(self._url(resource), **kwargs))
+    def _post(self, resource, allow_404=False, **kwargs):
+        return self._check(self._session.post(self._url(resource), **kwargs), allow_404=allow_404)
 
-    def _put(self, resource, **kwargs):
-        return self._check(self._session.put(self._url(resource), **kwargs))
+    def _put(self, resource, allow_404=False, **kwargs):
+        return self._check(self._session.put(self._url(resource), **kwargs), allow_404=allow_404)
 
-    def _delete(self, resource, **kwargs):
-        return self._check(self._session.delete(self._url(resource), **kwargs))
+    def _delete(self, resource, allow_404=False, **kwargs):
+        return self._check(self._session.delete(self._url(resource), **kwargs), allow_404=allow_404)
 
     def _url(self, resource):
         if resource.startswith("/"):
@@ -45,72 +66,50 @@ class Service:
 
 
 class Howl(Service):
-    def __init__(self, api_root):
-        Service.__init__(self, api_root)
+    def __init__(self, api_root, bearer_token):
+        Service.__init__(self, api_root, bearer_token)
 
-    def exists(self, namespace, path):
-        """Check the existence of the specified file, returning True or False accordingly."""
-        try:
-            self._head(self.path(namespace, path))
-            return True
-        except QuarticException:
-            # TODO - be more discriminating about 4xx codes vs. any old error
-            return False
+    def exists_path(self, path):
+        return self._head(path, allow_404=True) is not None
 
-    def exists_path(self, locator_path):
-        """Check the exists of the specified file at preformed path."""
-        return self._head(locator_path)
+    def download_path(self, path, stream=False):
+        return self._get(path, stream=stream)
 
-    def download(self, namespace, path):
-        """Download file."""
-        return self._get(self.path(namespace, path))
-
-    def upload(self, data, namespace, path=None):
-        if path:
-            return self._put(self.path(namespace, path), data=data)
+    def upload_path(self, path, data):
+        num_bits = len(path.split("/"))
+        # Recall that the path includes a leading slash, so counts are one higher
+        if num_bits == 5:
+            return self._put(path, data=data)
+        elif num_bits == 4:
+            return self._post(path, data=data)
         else:
-            r = self._post(namespace, data=data)
-        return r
+            raise QuarticException("Malformed Howl path: {}".format(path))
 
-    def path(self, namespace, path):
-        if path is None:
-            return namespace
-        return "/{}/managed/{}/{}".format(namespace, namespace, self._quote(path))
-
-    def _unmanaged_path(self, namespace, path):
-        return "/{}/unmanaged/{}".format(namespace, self._quote(path))
-
-    def unmanaged_open(self, namespace, path):
-        url = self._url(self._unmanaged_path(namespace, path))
-        try:
-            return self._opener.open(url)
-        except urllib.error.HTTPError as e:
-            if e.code == 404:
-                raise QuarticException("Unmanaged dataset not found: {} (namespace = {})".format(path, namespace))
-            raise
-
-    def url(self, namespace, path):
-        return self._url(self.path(namespace, path))
-
-    def path_url(self, full_path):
-        return self._url(full_path)
+    @staticmethod
+    def path(namespace, key=None):
+        if key is None:
+            return "/{}/managed/{}".format(namespace, namespace)
+        else:
+            return "/{}/managed/{}/{}".format(namespace, namespace, Service._quote(key))
 
 
 class Catalogue(Service):
-    def __init__(self, api_root):
-        Service.__init__(self, api_root)
+    def __init__(self, api_root, bearer_token):
+        Service.__init__(self, api_root, bearer_token)
 
     def datasets(self):
-        return self._get("datasets")
+        r = self._get("/datasets")
+        if r:
+            return r.json()
 
     def get(self, namespace, dataset_id):
-        r = self._get(self.url(namespace, dataset_id))
+        r = self._get(self._path(namespace, dataset_id), allow_404=True)
         if r:
             return r.json()
 
     def put(self, namespace, dataset_id, dataset, overwrite=False):
         if dataset_id is None:
-            return self._post(self.url(namespace, dataset_id), json=dataset).json()
+            return self._post(self._path(namespace, dataset_id), json=dataset).json()
         else:
             if not overwrite:
                 existing = self.get(namespace, dataset_id)
@@ -125,14 +124,14 @@ class Catalogue(Service):
                         )
                         raise QuarticException(msg)
 
-            self._put(self.url(namespace, dataset_id), json=dataset)
+            return self._put(self._path(namespace, dataset_id), json=dataset).json()
 
     def unregister(self, namespace, dataset_id):
-        return self._delete(self.url(namespace, dataset_id))
+        return self._delete(self._path(namespace, dataset_id))
 
     @staticmethod
-    def url(namespace, dataset_id):
+    def _path(namespace, dataset_id):
         if dataset_id is None:
-            return "datasets/{}".format(namespace)
+            return "/datasets/{}".format(namespace)
         else:
-            return "datasets/{}/{}".format(namespace, Service._quote(dataset_id))
+            return "/datasets/{}/{}".format(namespace, Service._quote(dataset_id))

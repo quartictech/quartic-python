@@ -7,12 +7,16 @@ try:
     class QuarticMagics(Magics):
         @line_magic
         def quartic_connect(self, line):
-            self.shell.push({"quartic": Quartic("http://{service}.platform:{port}/api/", shell=self.shell)})
+            self.shell.push({"quartic": Quartic(
+                api_token="TODO",
+                url_format="http://{service}.platform:{port}/api/",
+                shell=self.shell)
+                            })
             print("Connected to Quartic services.")
 
         @line_magic
         def quartic_connect_local(self, line):
-            self.shell.push({"quartic": Quartic()})
+            self.shell.push({"quartic": Quartic(api_token="TODO")})
             print("Connected to Quartic services at localhost.")
 except ImportError:
     print("Exception while importing iPython; disabling magics.")

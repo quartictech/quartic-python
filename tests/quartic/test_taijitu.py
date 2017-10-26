@@ -1,4 +1,4 @@
-from quartic.common.quartic import Quartic, QuarticException, Dataset
+from quartic.common.quartic import Quartic, Dataset
 import pytest
 from mock import Mock, call
 
@@ -9,87 +9,19 @@ from mock import Mock, call
 
 class TestBasics:
     def test_dataset_syntax(self):
-        q = Quartic("http://localhost:{port}/api/")
+        q = Quartic(api_token="abcd", url_format="http://localhost:{port}/api/")
         dataset = q("foo").dataset("bar")
 
         assert repr(dataset) == "foo::bar"
 
 
     def test_invalid_coords(self):
-        q = Quartic("http://localhost:{port}/api/")
+        q = Quartic(api_token="abcd", url_format="http://localhost:{port}/api/")
 
         with pytest.raises(ValueError):
             q("foo:x")
         with pytest.raises(ValueError):
             q("foo").dataset("bar:x")
-
-
-class TestRegistration:
-    def setup_method(self, method):
-        # pylint: disable=W0201
-        self.catalogue = mock_catalogue()
-        self.howl = mock_howl()
-        self.io_factory_class = mock_io_factory_class()
-
-
-    def test_creates_catalogue_entry(self):
-        dataset = Dataset(self.catalogue, self.howl, "yeah", "raw/qwerty",
-                          io_factory_class=self.io_factory_class)
-
-        dataset.register_raw("a/b/c", "foo", "bar")
-
-        assert self.catalogue.mock_calls == [call.put("yeah", "raw/qwerty", {
-            "metadata": {
-                "name": "foo",
-                "description": "bar",
-                "attribution": "quartic"
-            },
-            "extensions": {
-            },
-            "locator": {
-                "type": "cloud",
-                "path": "/some-path",
-                "streaming": False,
-                "mime_type": "application/octet-stream"
-            }
-        }, False)]
-
-
-    def test_uses_name_as_description_if_no_description_supplied(self):
-        dataset = Dataset(self.catalogue, self.howl, "yeah", "raw/qwerty",
-                          io_factory_class=self.io_factory_class)
-
-        dataset.register_raw("a/b/c", "foo")
-
-        assert self.catalogue.put.mock_calls[0][1][2]["metadata"]["description"] == "foo"
-
-
-    def test_constructs_correct_howl_path(self):
-        dataset = Dataset(self.catalogue, self.howl, "yeah", "raw/qwerty",
-                          io_factory_class=self.io_factory_class)
-
-        dataset.register_raw("a/b/c", "foo", "bar")
-
-        assert self.howl.exists.mock_calls == [call("yeah", "raw/a/b/c")] # Note raw/ prefix
-        assert self.howl.path.mock_calls == [call("yeah", "raw/a/b/c")] # Note raw/ prefix
-
-
-    def test_enforces_id_starts_with_raw(self):
-        dataset = Dataset(self.catalogue, self.howl, "yeah", "qwerty",
-                          io_factory_class=self.io_factory_class)
-
-        with pytest.raises(QuarticException):
-            dataset.register_raw("a/b/c", "foo", "bar")
-
-
-    def test_enforces_dataset_exists_in_howl(self):
-        self.howl.exists.return_value = False
-
-        dataset = Dataset(self.catalogue, self.howl, "yeah", "raw/qwerty",
-                          io_factory_class=self.io_factory_class)
-
-        with pytest.raises(QuarticException):
-            dataset.register_raw("a/b/c", "foo", "bar")
 
 
 class TestWriter:
@@ -104,24 +36,24 @@ class TestWriter:
         self.io_factory_class = mock_io_factory_class()
 
 
-    def test_performs_post_for_new_datasets(self):
+    def test_invokes_howl_for_new_datasets(self):
         dataset = Dataset(self.catalogue, self.howl, "yeah", None,
                           io_factory_class=self.io_factory_class)
 
         with dataset.writer("foo", "bar"):
             pass
 
-        assert self.io_factory_class.mock_calls[0] == call("http://some-url", "POST")
+        assert self.io_factory_class.mock_calls[0] == call(self.howl, "/some-path")
 
 
-    def test_performs_put_for_new_datasets_if_id_specified(self):
+    def test_invokes_howl_for_new_datasets_if_id_specified(self):
         dataset = Dataset(self.catalogue, self.howl, "yeah", "1234",
                           io_factory_class=self.io_factory_class)
 
         with dataset.writer("foo", "bar"):
             pass
 
-        assert self.io_factory_class.mock_calls[0] == call("http://some-url", "PUT")
+        assert self.io_factory_class.mock_calls[0] == call(self.howl, "/some-path")
 
 
     def test_creates_catalogue_entry(self):

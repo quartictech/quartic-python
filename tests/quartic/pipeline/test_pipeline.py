@@ -76,8 +76,11 @@ class TestCli:
         main(args)
 
         nodes = json.load(open(output_path))["nodes"]
-        args = parse_args(["--execute", nodes[0]["id"], "--namespace", "test",
-                           os.path.join(resources_dir, "good_dag")])
+        args = parse_args([
+            "--execute", nodes[0]["id"],
+            "--namespace", "test",
+            "--api-token", "my-special-token",
+            os.path.join(resources_dir, "good_dag")])
         main(args)
 
 
@@ -158,20 +161,20 @@ class TestWriter:
         dataset = MagicMock()
         writer("foo", "bar").apply(dataset)
 
-        assert dataset.writer.called_with("foo", "bar")
+        dataset.writer.assert_called_with("foo", "bar")
 
     def test_parquet(self):
         dataset = MagicMock()
         writer("foo", "bar").parquet(42).apply(dataset)
 
-        assert dataset.writer.__enter__.parquet.called_with(42)
+        dataset.writer.return_value.__enter__.return_value.parquet.assert_called_with(42)
 
 
     def test_json(self):
         dataset = MagicMock()
         writer("foo", "bar").json(42).apply(dataset)
 
-        assert dataset.writer.__enter__.json.called_with(42)
+        dataset.writer.return_value.__enter__.return_value.json.assert_called_with(42)
 
 
 
