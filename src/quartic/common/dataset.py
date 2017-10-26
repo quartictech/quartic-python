@@ -58,9 +58,7 @@ class Dataset:
         return Dataset(bits[1], bits[0])
 
 class Writer:
-    def __init__(self, name, description):
-        self._name = name
-        self._description = description
+    def __init__(self):
         self._exec = lambda f: None
 
     def parquet(self, df):
@@ -75,9 +73,9 @@ class Writer:
         self._exec = lambda f: f.csv(df)
         return self
 
-    def apply(self, dataset):
-        with dataset.writer(self._name, self._description) as f:
+    def apply(self, name, metadata, dataset):
+        with dataset.writer(name=name, **metadata) as f:
             self._exec(f)
 
-def writer(name, description=None):
-    return Writer(name, description)
+def writer():
+    return Writer()

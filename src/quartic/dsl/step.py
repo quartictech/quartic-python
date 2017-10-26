@@ -1,11 +1,13 @@
 from .context import DslContext
 from .node import Node, Executor
 
-def step(f):
-    return DslContext.register(Node(f, StepExecutor()))
+def step(name, **kwargs):
+    def inner(f):
+        return DslContext.register(Node(f, StepExecutor(), name, kwargs))
+    return inner
 
 class StepExecutor(Executor):
-    def execute(self, context, inputs, output, func):
+    def execute(self, name, metadata, context, inputs, output, func):
         kwargs = {}
         for k, v in inputs.items():
             if isinstance(v, dict):
@@ -14,7 +16,7 @@ class StepExecutor(Executor):
                 kwargs[k] = context.resolve(v)
 
         output_writer = func(**kwargs)
-        output_writer.apply(context.resolve(output))
+        output_writer.apply(name, metadata, context.resolve(output))
 
     def to_dict(self):
         return {"type": "step"}

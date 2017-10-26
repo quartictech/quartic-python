@@ -83,7 +83,9 @@ class Dataset:
         return DatasetReader(self._io_factory_class(self._howl, dataset["locator"]["path"], None))
 
     def writer(self, name=None, description=None, mime_type="application/octet-stream",
-               attribution="quartic", extensions=None, streaming=False):
+               attribution="quartic", extensions=None, streaming=False, **kwargs):
+        if kwargs:
+            raise NotImplementedError("Additional metadata arguments are not yet supported")
         dataset = self._get_dataset()
         if dataset:
             return self._writer_for_existing_dataset(name, description, dataset)

@@ -17,10 +17,8 @@ class RawExecutor(Executor):
         }
 
 class FromBucket:
-    def __init__(self, path, name=None, desc=None):
+    def __init__(self, path):
         self.path = path
-        self.name = name
-        self.desc = desc
 
     def to_dict(self):
         return {
@@ -28,6 +26,8 @@ class FromBucket:
             "key": self.path
         }
 
-def raw(f):
-    raw_dataset_spec = f()
-    return DslContext.register(Node(f, RawExecutor(raw_dataset_spec)))
+def raw(name, **kwargs):
+    def inner(f):
+        raw_dataset_spec = f()
+        return DslContext.register(Node(f, RawExecutor(raw_dataset_spec), name, kwargs))
+    return inner

@@ -22,21 +22,28 @@ class Executor:
         return {}
 
 class LexicalInfo:
-    def __init__(self, file, line_range):
+    def __init__(self, name, description, file, line_range):
+        self.name = name
+        self.description = description
         self.file = file
         self.line_range = line_range
 
 class Node:
-    def __init__(self, func, executor, *args, **kwargs):
-        self.name = func.__name__
-        self.description = func.__doc__
+    def __init__(self, func, executor, name, metadata, *args, **kwargs):
+        self.name = name
+        self.metadata = metadata
         self._func = func
         self._executor = executor
+        self._name = name
+        self._metadata = metadata
         source_lines = inspect.getsourcelines(func)
         end_line = source_lines[1] + len(source_lines[0]) - 1
         self._lexical_info = LexicalInfo(
+            func.__name__,
+            func.__doc__,
             os.path.relpath(inspect.getsourcefile(func)),
-            (source_lines[1], end_line))
+            (source_lines[1], end_line)
+        )
         self._inputs = {}
         sig = inspect.signature(func)
 
@@ -82,8 +89,14 @@ class Node:
         return itertools.chain(self.inputs(), self.outputs())
 
     def execute(self, quartic, namespace):
-        self._executor.execute(ExecutionContext(quartic, namespace),
-                               self._inputs, self._output, self._func)
+        self._executor.execute(
+            context=ExecutionContext(quartic, namespace),
+            name=self._name,
+            metadata=self._metadata,
+            inputs=self._inputs,
+            output=self._output,
+            func=self._func
+        )
 
     def __repr__(self):
         return pprint.pformat(self.to_dict())
@@ -91,9 +104,11 @@ class Node:
     def to_dict(self):
         out = {
             "id": self.get_id(),
+            "name": self.name,
+            "metadata": self.metadata,
             "info": {
-                "name": self.name,
-                "description": self.description,
+                "name": self._lexical_info.name,
+                "description": self._lexical_info.description,
                 "file": self._lexical_info.file,
                 "line_range": self._lexical_info.line_range
             },
